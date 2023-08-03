@@ -1,0 +1,4 @@
+name: CaptureTheFlag
+version: '${project.version}'
+main: com.tqqn.capturetheflag.CaptureTheFlag
+api-version: 1.16
