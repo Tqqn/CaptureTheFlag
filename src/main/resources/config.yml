@@ -1,0 +1,27 @@
+max-players: 2
+min-players: 2
+lobby:
+  spawn:
+    world: "world"
+    x:
+    y:
+    z:
+    yaw:
+    pitch:
+team:
+  red:
+    spawn:
+      world: "world"
+      x:
+      y:
+      z:
+      yaw:
+      pitch:
+  blue:
+    spawn:
+      world: "world"
+      x:
+      y:
+      z:
+      yaw:
+      pitch:

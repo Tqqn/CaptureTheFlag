@@ -2,3 +2,8 @@ name: CaptureTheFlag
 version: '${project.version}'
 main: com.tqqn.capturetheflag.CaptureTheFlag
 api-version: 1.16
+commands:
+  team:
+    description: Choose a team
+    usage: /<command>
+    permission: team.choose
