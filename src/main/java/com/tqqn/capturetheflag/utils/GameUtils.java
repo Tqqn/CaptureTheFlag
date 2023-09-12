@@ -1,7 +1,10 @@
 package com.tqqn.capturetheflag.utils;
 
+import com.tqqn.capturetheflag.data.GamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
@@ -22,5 +25,13 @@ public class GameUtils {
         }
         return msgArray.toArray(new String[0]);
     }
+
+    public static String convertSecondsToHMmSs(long seconds) {
+        long s = seconds % 60;
+        long m = (seconds / 60) % 60;
+        return String.format("%02d:%02d", m, s);
+    }
+
+
 
 }

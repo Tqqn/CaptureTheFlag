@@ -7,3 +7,11 @@ commands:
     description: Choose a team
     usage: /<command>
     permission: team.choose
+  debug:
+    description: Debug Commands
+    usage: /<command>
+    permission: ctf.debug
+  setup:
+    description: Setup Commands
+    usage: /<command>
+    permission: ctf.setup

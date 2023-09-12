@@ -3,7 +3,7 @@ package com.tqqn.capturetheflag.data;
 public enum GamePoints {
 
     PLAYER_KILL(5),
-    FLAG_CAPTURE(100),
+    FLAG_CAPTURE(300),
     POINTS_PER_5_SECONDS(2),
     POINTS_NEEDED_TO_WIN(500);
 

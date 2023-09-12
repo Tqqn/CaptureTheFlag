@@ -7,10 +7,15 @@ import org.bukkit.inventory.ItemStack;
 public enum GameItems {
 
     //SetupWizard Items
-    SETUPWIZARD_SET_LOBBY_LOCATION_ITEM("&cSet Lobby Location", Material.BOOK, new String[]{"&6Sets Lobby Spawn location"}, true, 1),
-    SETUPWIZARD_SET_POWERUP_LOCATIONS_ITEM("&cSet PowerUp Location", Material.FEATHER, new String[]{"&6Sets PowerUp locations."}, true, 1),
-    SETUPWIZARD_SAVE_ITEM("&cSave", Material.NETHER_STAR, new String[]{"&6Saves locations."}, true, 1),
-    SETUPWIZARD_SET_ARENA_LOCATION_ITEM("&cSet Arena Locations", Material.FEATHER, new String[]{"&6Sets Arena Spawn locations"}, true, 1),
+    SETUPWIZARD_SET_LOBBY_LOCATION_ITEM("&cSet Lobby Location", Material.BOOK, new String[]{"&6Sets Lobby Spawn location"}, false, 1),
+    SETUPWIZARD_SET_POWERUP_LOCATIONS_ITEM("&cSet PowerUp Location", Material.FEATHER, new String[]{"&6Sets PowerUp locations."}, false, 1),
+    SETUPWIZARD_SAVE_ITEM("&cSave", Material.NETHER_STAR, new String[]{"&6Saves locations."}, false, 1),
+
+    SETUPWIZARD_SET_TEAM_BLUE_SPAWN_LOCATION_ITEM("&cSet Blue Spawn Location", Material.BLUE_WOOL, new String[]{"&6Sets Blue Spawn location"}, false, 1),
+    SETUPWIZARD_SET_TEAM_BLUE_FLAG_LOCATION_ITEM("&cSet Blue Flag Location", Material.BLUE_BANNER, new String[]{"&6Sets Blue Flag location"}, false, 1),
+
+    SETUPWIZARD_SET_TEAM_RED_SPAWN_LOCATION_ITEM("&cSet Red Spawn Location", Material.RED_WOOL, new String[]{"&6Sets Red Spawn location"}, false, 1),
+    SETUPWIZARD_SET_TEAM_RED_FLAG_LOCATION_ITEM("&cSet Red Flag Location", Material.RED_BANNER, new String[]{"&6Sets Red Flag location"}, false, 1),
 
     //Lobby Items
     CHOOSE_RED_TEAM("&cChoose Red Team &e[RIGHT-CLICK]", Material.RED_WOOL, new String[]{"&eRight Click to choose &cRed Team"}, false, 1),
@@ -23,7 +28,11 @@ public enum GameItems {
     //PowerUp Items
     POWERUP_SPEED_ITEM("&cSpeed-PowerUp", Material.FEATHER, null, true, 1),
     POWERUP_JUMP_ITEM("&cJump-PowerUp", Material.RABBIT_FOOT, null, true, 1),
-    POWERUP_TRACKER_ITEM("&cTracker-PowerUp", Material.BLAZE_POWDER, null, true, 1);
+    POWERUP_STRENGHT_ITEM("&cStrenght-PowerUp", Material.DIAMOND_SWORD, null, true, 1),
+
+    //Team Flags
+    RED_FLAG("&cRed Flag", Material.RED_BANNER, null, false, 1),
+    BLUE_FLAG("&9Blue Flag", Material.BLUE_BANNER, null, false, 1);
 
     private final String displayName;
     private final Material material;

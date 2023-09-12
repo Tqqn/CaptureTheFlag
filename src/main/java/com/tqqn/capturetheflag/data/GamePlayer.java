@@ -1,6 +1,7 @@
 package com.tqqn.capturetheflag.data;
 
-import com.tqqn.capturetheflag.teams.Team;
+import com.tqqn.capturetheflag.flag.Flag;
+import com.tqqn.capturetheflag.teams.GameTeam;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -11,7 +12,13 @@ public class GamePlayer {
 
     private final Player player;
     private final String playerName;
-    private Team team = null;
+    private GameTeam gameTeam = null;
+
+    private boolean hasFlag = false;
+    private Flag flag;
+
+    private int kills = 0;
+    private int assists = 0;
 
     public GamePlayer(Player player) {
         this.uuid = player.getUniqueId();
@@ -19,12 +26,12 @@ public class GamePlayer {
         this.playerName = player.getName();
     }
 
-    public void setTeam(Team team) {
-        if (this.team != team) this.team = team;
+    public void setTeam(GameTeam gameTeam) {
+        if (this.gameTeam != gameTeam) this.gameTeam = gameTeam;
     }
 
-    public Team getTeam() {
-        return this.team;
+    public GameTeam getTeam() {
+        return this.gameTeam;
     }
 
     public Player getPlayer() {
@@ -33,5 +40,38 @@ public class GamePlayer {
 
     public void giveKitItems() {
 
+    }
+
+    public void addKill() {
+        this.kills = (this.kills+1);
+    }
+
+    public void addAssist() {
+        this.assists = (this.assists+1);
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public boolean hasFlag() {
+        return hasFlag;
+    }
+
+    public void giveFlag(Flag flag) {
+        hasFlag = true;
+        this.flag = flag;
+    }
+    public void removeFlag() {
+        hasFlag = false;
+        this.flag = null;
+    }
+
+    public Flag getFlag() {
+        return flag;
     }
 }

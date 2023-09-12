@@ -1,5 +1,6 @@
 package com.tqqn.capturetheflag.utils;
 
+import com.tqqn.capturetheflag.data.GamePoints;
 import org.bukkit.ChatColor;
 
 public enum SMessages {
@@ -12,7 +13,8 @@ public enum SMessages {
     /**
      * Placeholder: Seconds
      */
-    GAME_END_COUNTDOWN("&cGame is ending in &f%s"),
+    GAME_END_COUNTDOWN("&cGame is ending in &f%s &cseconds."),
+    GAME_RESTART_COUNTDOWN("&cGame is shutting down in &f%s &cseconds."),
 
     /**
      * Placeholder: PlayerName - minimumPlayers - maximumPlayers
@@ -27,19 +29,40 @@ public enum SMessages {
     /**
      * Placeholder: KilledPlayerName - KillerPlayerName
      */
-    PLAYER_DEATH_BY_PLAYER("&c%s &ehas been killed by &c%s&e."),
+    PLAYER_DEATH_BY_PLAYER("%s &ehas been killed by %s&e."),
 
     /**
      * Placeholder: KilledPlayerName
      */
-    PLAYER_DEATH("&c%s &edied."),
+    PLAYER_DEATH("%s &edied."),
 
     /**
      * Placeholder: TeamColor - WinnerPlayerName
      */
     TEAM_WIN("%s%s &ehas won the game!"),
+
+    /**
+     * Placeholder: TeamName
+     */
     CHOOSE_TEAM("&fYou have chosen Team %s!"),
-    ALREADY_IN_TEAM("&fYou are already a part of Team %s&f!");
+
+    /**
+     * Placeholder: TeamName
+     */
+    ALREADY_IN_TEAM("&fYou are already a part of Team %s&f!"),
+
+    ENEMY_FLAG_CAPTURE("%s&l%s &ehas captured the %s&eflag!"),
+    FLAG_RETURNED("%s&l%s &ehas returned the %s&eflag!"),
+
+    FLAG_RESET_COUNTDOWN("&2Flags are resetting in &f&l%s&r&2..."),
+
+    /**
+     * Placeholder: Kills - Assists
+     */
+    SCOREBOARD_KILLS_ASSISTS("&fKills: &l%s &r&fAssists: &l%s"),
+    POWERUP_PICKUP("&eYou picked up the &l%s &r&e!"),
+
+    SETUPWIZARD_SELECTED_LOCATION("&eYou selected the %s &elocation!");
 
     private final String message;
 

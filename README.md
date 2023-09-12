@@ -1,11 +1,11 @@
 # Minigame - CaptureTheFlag
 MC-Version: 1.16.x and above
 ## Description:
-- Capture the Flag is a classic multiplayer game. The objective is to work as a team by capturing the enemy flag that is located in the enemy team's base.
+- Capture the Flag is a classic multiplayer game. The objective is to work as a gameTeam by capturing the enemy flag that is located in the enemy gameTeam's base.
   Meanwhile trying to defend your own flag from enemy players.
 
   Taking the enemy Flag and bringing it back to ur own flag will give points.
-  The team with the most points wins the game.
+  The gameTeam with the most points wins the game.
 
 ## Commands:
 ### Admin Commands:
@@ -13,8 +13,8 @@ MC-Version: 1.16.x and above
 - /ctf stop - Force stops the game.
 
 ### Player Commands:
-- /ctf join < team > - Join a team.
-- /ctf leave - Leave a team.
+- /ctf join < gameTeam > - Join a gameTeam.
+- /ctf leave - Leave a gameTeam.
 
 
 ### Disclaimer:

@@ -1,5 +1,6 @@
 max-players: 2
 min-players: 2
+game-start-countdown: 10
 lobby:
   spawn:
     world: "world"
@@ -17,6 +18,11 @@ team:
       z:
       yaw:
       pitch:
+    flag:
+      world: "world"
+      x:
+      y:
+      z:
   blue:
     spawn:
       world: "world"
@@ -25,3 +31,14 @@ team:
       z:
       yaw:
       pitch:
+    flag:
+      world: "world"
+      x:
+      y:
+      z:
+powerups:
+  1:
+    world:
+    x:
+    y:
+    z:

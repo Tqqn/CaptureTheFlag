@@ -1,45 +1,64 @@
 package com.tqqn.capturetheflag.arena;
 
+import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.data.GamePlayer;
 import com.tqqn.capturetheflag.data.GamePoints;
-import com.tqqn.capturetheflag.teams.Team;
+import com.tqqn.capturetheflag.flag.FlagStatus;
+import com.tqqn.capturetheflag.game.GameManager;
+import com.tqqn.capturetheflag.game.GameStates;
+import com.tqqn.capturetheflag.powerups.PowerUp;
+import com.tqqn.capturetheflag.powerups.tasks.ActivePowerUpTask;
+import com.tqqn.capturetheflag.powerups.types.JumpPowerUp;
+import com.tqqn.capturetheflag.powerups.types.SpeedPowerUp;
+import com.tqqn.capturetheflag.powerups.types.StrenghtPowerUp;
+import com.tqqn.capturetheflag.teams.GameTeam;
+import com.tqqn.capturetheflag.utils.GameUtils;
+import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Arena {
 
     private final Location lobbyLocation;
-    private final Team teamRed;
-    private final Team teamBlue;
+    private final GameTeam gameTeamRed;
+    private final GameTeam gameTeamBlue;
 
     private final int minimumPlayers;
     private final int maximumPlayers;
 
-    private final HashMap<UUID, GamePlayer> inGamePlayers = new HashMap<>();
+    private final int gameStartCountdown;
+    private static final Map<UUID, GamePlayer> inGamePlayers = new HashMap<>();
+    private final List<PowerUp> powerUps = new ArrayList<>();
+    private final List<Location> powerUpsSpawnLocation = CaptureTheFlag.getInstance().getPluginConfig().getPowerUpSpawnLocations();
 
-    public Arena(Location lobbyLocation, Team teamRed, Team teamBlue, int minimumPlayers, int maximumPlayers) {
+    public Arena(Location lobbyLocation, GameTeam gameTeamRed, GameTeam gameTeamBlue, int minimumPlayers, int maximumPlayers, int gameStartCountdown) {
         this.lobbyLocation = lobbyLocation;
-        this.teamRed = teamRed;
-        this.teamBlue = teamBlue;
+        this.gameTeamRed = gameTeamRed;
+        this.gameTeamBlue = gameTeamBlue;
         this.minimumPlayers = minimumPlayers;
         this.maximumPlayers = maximumPlayers;
+        this.gameStartCountdown = gameStartCountdown;
+        powerUps.add(new JumpPowerUp(null));
+        powerUps.add(new SpeedPowerUp(null));
+        powerUps.add(new StrenghtPowerUp(null));
     }
 
     public void teleportPlayerToSpawn(Player player) {
-        try {
             player.teleport(inGamePlayers.get(player.getUniqueId()).getTeam().getSpawnLocation());
-        } catch (NullPointerException ignored) {
-        }
     }
 
     public void teleportAllPlayersToSpawn() {
         for (GamePlayer gamePlayer : inGamePlayers.values()) {
             teleportPlayerToSpawn(gamePlayer.getPlayer());
+        }
+    }
+
+    public void clearAllPlayerInventories() {
+        for (GamePlayer gamePlayer : inGamePlayers.values()) {
+            gamePlayer.getPlayer().getInventory().clear();
         }
     }
 
@@ -49,6 +68,10 @@ public class Arena {
 
     public int getMaximumPlayers() {
         return maximumPlayers;
+    }
+
+    public int getGameStartCountdown() {
+        return gameStartCountdown;
     }
 
     public Location getLobbyLocation() {
@@ -63,6 +86,10 @@ public class Arena {
         return playerList;
     }
 
+    public Collection<GamePlayer> getGamePlayers() {
+        return inGamePlayers.values();
+    }
+
     public List<GamePlayer> getNoTeamPlayers() {
         List<GamePlayer> playerList = new ArrayList<>();
         for (GamePlayer gamePlayer : inGamePlayers.values()) {
@@ -71,7 +98,7 @@ public class Arena {
         return playerList;
     }
 
-    public GamePlayer getGamePlayer(UUID uuid) {
+    public static GamePlayer getGamePlayer(UUID uuid) {
         return inGamePlayers.get(uuid);
     }
 
@@ -84,16 +111,25 @@ public class Arena {
         inGamePlayers.remove(player.getUniqueId());
     }
 
-    public Team isThereAWinner() {
-        if (teamRed.getPoints() == GamePoints.POINTS_NEEDED_TO_WIN.getPoints()) return teamRed;
-        if (teamBlue.getPoints() == GamePoints.POINTS_NEEDED_TO_WIN.getPoints()) return teamBlue;
+    public GameTeam isThereAWinner() {
+        if (gameTeamRed.getPoints() >= GamePoints.POINTS_NEEDED_TO_WIN.getPoints()) return gameTeamRed;
+        if (gameTeamBlue.getPoints() >= GamePoints.POINTS_NEEDED_TO_WIN.getPoints()) return gameTeamBlue;
 
         return null;
     }
+    public GameTeam whoIsWinner() {
+        if (gameTeamBlue.getPoints() > gameTeamRed.getPoints()) {
+            return gameTeamBlue;
+        } else if (gameTeamRed.getPoints() > gameTeamBlue.getPoints()) {
+            return gameTeamRed;
+        } else {
+            return null;
+        }
+    }
 
     public void addTeamPoints(GamePoints gamePoints) {
-        teamRed.addPoints(gamePoints.getPoints());
-        teamBlue.addPoints(gamePoints.getPoints());
+        gameTeamRed.addPoints(gamePoints.getPoints());
+        gameTeamBlue.addPoints(gamePoints.getPoints());
     }
 
     public boolean checkIfTeam(Player damager, Player damaged) {
@@ -101,5 +137,55 @@ public class Arena {
         GamePlayer damagedPlayer = inGamePlayers.get(damaged.getUniqueId());
 
         return playerDamager.getTeam().equals(damagedPlayer.getTeam());
+    }
+
+    public void spawnFlags() {
+        gameTeamBlue.spawnTeamFlagOnSpawn();
+        gameTeamRed.spawnTeamFlagOnSpawn();
+    }
+
+    public void resetFlags() {
+        gameTeamBlue.removeFlag();
+        gameTeamBlue.getTeamFlag().setFlagStatus(FlagStatus.RESPAWNING);
+
+        gameTeamRed.removeFlag();
+        gameTeamRed.getTeamFlag().setFlagStatus(FlagStatus.RESPAWNING);
+
+        new BukkitRunnable() {
+            private int countdown = 10;
+            @Override
+            public void run() {
+                if (GameManager.getGameStates() != GameStates.ACTIVE) {
+                    cancel();
+                    return;
+                }
+                if (countdown == 0) {
+                    cancel();
+                    gameTeamBlue.spawnTeamFlagOnSpawn();
+                    gameTeamRed.spawnTeamFlagOnSpawn();
+                    return;
+                }
+                GameUtils.broadcastMessage(SMessages.FLAG_RESET_COUNTDOWN.getMessage(String.valueOf(countdown)));
+                countdown--;
+            }
+        }.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
+    }
+
+    public void spawnRandomPowerUp() {
+        PowerUp powerUp = getRandomPowerUp();
+        powerUp.setLocation(getRandomPowerUpSpawnLocation());
+        powerUp.setPowerUp();
+        ActivePowerUpTask activePowerUpTask = new ActivePowerUpTask(powerUp);
+        activePowerUpTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 10);
+    }
+
+    public PowerUp getRandomPowerUp() {
+        Random random = new Random();
+        return powerUps.get(random.nextInt(powerUps.size()));
+    }
+
+    public Location getRandomPowerUpSpawnLocation() {
+        Random random = new Random();
+        return powerUpsSpawnLocation.get(random.nextInt(powerUpsSpawnLocation.size()));
     }
 }
