@@ -3,8 +3,8 @@ package com.tqqn.capturetheflag.game.gamestates.end;
 import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.game.AbstractGameState;
 import com.tqqn.capturetheflag.game.GameManager;
-import com.tqqn.capturetheflag.tasks.EndGameTask;
-import com.tqqn.capturetheflag.teams.GameTeam;
+import com.tqqn.capturetheflag.game.gamestates.end.tasks.EndGameTask;
+import com.tqqn.capturetheflag.game.teams.GameTeam;
 import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.SMessages;
 

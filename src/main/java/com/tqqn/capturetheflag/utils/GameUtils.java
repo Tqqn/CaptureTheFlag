@@ -1,10 +1,7 @@
 package com.tqqn.capturetheflag.utils;
 
-import com.tqqn.capturetheflag.data.GamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 

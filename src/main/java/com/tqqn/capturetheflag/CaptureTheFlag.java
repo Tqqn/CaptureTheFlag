@@ -1,10 +1,11 @@
 package com.tqqn.capturetheflag;
 
-import com.tqqn.capturetheflag.commands.DebugCommands;
-import com.tqqn.capturetheflag.commands.TeamCommands;
+import com.tqqn.capturetheflag.game.commands.DebugCommands;
+import com.tqqn.capturetheflag.game.commands.TeamCommands;
 import com.tqqn.capturetheflag.game.GameManager;
-import com.tqqn.capturetheflag.game.gamestates.setup.commands.SetupCommands;
-import com.tqqn.capturetheflag.setupwizard.SetupManager;
+import com.tqqn.capturetheflag.setup.commands.SetupCommands;
+import com.tqqn.capturetheflag.setup.SetupManager;
+import com.tqqn.capturetheflag.utils.MenuManager;
 import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.PluginConfig;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ public final class CaptureTheFlag extends JavaPlugin {
     private PluginConfig pluginConfig;
     private GameManager gameManager;
     private SetupManager setupManager;
+    private MenuManager menuManager;
 
     @Override
     public void onEnable() {
@@ -28,6 +30,7 @@ public final class CaptureTheFlag extends JavaPlugin {
             this.gameManager = new GameManager(this);
             this.gameManager.init();
         }
+        this.menuManager = new MenuManager();
         registerCommands();
     }
 
@@ -46,6 +49,10 @@ public final class CaptureTheFlag extends JavaPlugin {
 
     public GameManager getGameManager() {
         return this.gameManager;
+    }
+
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 
     public void registerCommands() {

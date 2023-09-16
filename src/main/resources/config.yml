@@ -1,3 +1,4 @@
+setup-mode: true
 max-players: 2
 min-players: 2
 game-start-countdown: 10

@@ -15,3 +15,7 @@ commands:
     description: Setup Commands
     usage: /<command>
     permission: ctf.setup
+  kit:
+    description: Kit Commands
+    usage: /<command>
+    permission: ctf.kit

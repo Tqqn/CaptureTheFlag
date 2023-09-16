@@ -1,13 +1,13 @@
 package com.tqqn.capturetheflag.game.gamestates.lobby;
 
 import com.tqqn.capturetheflag.CaptureTheFlag;
-import com.tqqn.capturetheflag.arena.Arena;
-import com.tqqn.capturetheflag.data.GamePlayer;
+import com.tqqn.capturetheflag.game.arena.Arena;
+import com.tqqn.capturetheflag.game.data.GamePlayer;
 import com.tqqn.capturetheflag.game.AbstractGameState;
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.GameStates;
-import com.tqqn.capturetheflag.items.GameItems;
-import com.tqqn.capturetheflag.tasks.StartGameTask;
+import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.game.gamestates.lobby.tasks.StartGameTask;
 import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public class LobbyGameState extends AbstractGameState {
         GamePlayer gamePlayer = Arena.getGamePlayer(player.getUniqueId());
 
         if (GameManager.getGameStates() == GameStates.LOBBY) {
-            if (GameItems.CHOOSE_RED_TEAM.getItemStack().isSimilar(event.getItem())) {
+            if (PluginItems.CHOOSE_RED_TEAM.getItemStack().isSimilar(event.getItem())) {
                 if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamRed()) {
                     player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
                     return;
@@ -51,7 +51,7 @@ public class LobbyGameState extends AbstractGameState {
                 gameManager.getTeamRed().addPlayerToTeam(gamePlayer, gameManager.getTeamRed());
                 player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
 
-            } else if (GameItems.CHOOSE_BLUE_TEAM.getItemStack().isSimilar(event.getItem())) {
+            } else if (PluginItems.CHOOSE_BLUE_TEAM.getItemStack().isSimilar(event.getItem())) {
                 if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamBlue()) {
                     player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
                     return;

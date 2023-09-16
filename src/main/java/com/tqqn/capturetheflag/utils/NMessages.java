@@ -23,7 +23,8 @@ public enum NMessages {
 
     SETUPWIZARD_JOIN_PLAYER_MESSAGE("&bYou are joining in setup mode. Please select and save the locations."),
     SETUPWIZARD_SAVE_LOCATION("&bYou saved the setup locations."),
-    SETUPWIZARD_LOCATION_NULL("&cError! One or more locations are null. Please select the locations.");
+    SETUPWIZARD_LOCATION_NULL("&cError! One or more locations are null. Please select the locations."),
+    KIT_SAME_KIT("&cYou already have chosen this kit!");
     private final String message;
 
     NMessages(String message) {

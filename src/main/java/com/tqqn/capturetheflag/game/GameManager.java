@@ -1,22 +1,26 @@
 package com.tqqn.capturetheflag.game;
 
 import com.tqqn.capturetheflag.CaptureTheFlag;
-import com.tqqn.capturetheflag.arena.Arena;
-import com.tqqn.capturetheflag.data.GamePlayer;
-import com.tqqn.capturetheflag.flag.Flag;
+import com.tqqn.capturetheflag.game.arena.Arena;
+import com.tqqn.capturetheflag.game.commands.DebugCommands;
+import com.tqqn.capturetheflag.game.commands.KitCommands;
+import com.tqqn.capturetheflag.game.commands.TeamCommands;
+import com.tqqn.capturetheflag.game.data.GamePlayer;
+import com.tqqn.capturetheflag.game.flag.Flag;
 import com.tqqn.capturetheflag.game.gamestates.active.ActiveGameState;
 import com.tqqn.capturetheflag.game.gamestates.end.EndGameState;
 import com.tqqn.capturetheflag.game.gamestates.lobby.LobbyGameState;
-import com.tqqn.capturetheflag.items.GameItems;
-import com.tqqn.capturetheflag.listeners.global.*;
-import com.tqqn.capturetheflag.listeners.universal.BlockBreakListener;
-import com.tqqn.capturetheflag.listeners.universal.BlockPlaceListener;
-import com.tqqn.capturetheflag.tab.TabScoreboardManager;
-import com.tqqn.capturetheflag.tasks.ActiveGameTask;
-import com.tqqn.capturetheflag.teams.GameTeam;
-import com.tqqn.capturetheflag.teams.TeamChatPrefix;
-import com.tqqn.capturetheflag.teams.TeamColor;
-import com.tqqn.capturetheflag.teams.TeamTabPrefix;
+import com.tqqn.capturetheflag.game.kits.menu.KitSelectorMenu;
+import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.game.listeners.global.*;
+import com.tqqn.capturetheflag.game.listeners.universal.BlockBreakListener;
+import com.tqqn.capturetheflag.game.listeners.universal.BlockPlaceListener;
+import com.tqqn.capturetheflag.game.tab.TabScoreboardManager;
+import com.tqqn.capturetheflag.game.gamestates.active.tasks.ActiveGameTask;
+import com.tqqn.capturetheflag.game.teams.GameTeam;
+import com.tqqn.capturetheflag.game.teams.TeamChatPrefix;
+import com.tqqn.capturetheflag.game.teams.TeamColor;
+import com.tqqn.capturetheflag.game.teams.TeamTabPrefix;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -31,7 +35,7 @@ import java.util.Map;
 public class GameManager {
 
     private static GameStates gameState = GameStates.LOBBY;
-    private final TabScoreboardManager tabScoreboardManager = new TabScoreboardManager(this);
+    private final TabScoreboardManager tabScoreboardManager = new TabScoreboardManager();
     private static final Map<Location, Flag> spawnedFlags = new HashMap<>();
 
     private final List<AbstractGameState> enabledGameStates = new ArrayList<>();
@@ -45,19 +49,24 @@ public class GameManager {
 
     private Arena arena;
 
+    private KitSelectorMenu kitSelectorMenu;
+
     public GameManager(CaptureTheFlag plugin) {
         this.plugin = plugin;
     }
 
     public void init() {
-        this.gameTeamRed = new GameTeam("&cRed", TeamColor.RED, TeamTabPrefix.RED_TAB_PREFIX, TeamChatPrefix.RED_CHAT_PREFIX, 1,  plugin.getPluginConfig().getTeamSpawnLocation("red"), new Flag("&cRed Flag", plugin.getPluginConfig().getTeamFlagSpawnLocation("red"), GameItems.RED_FLAG.getItemStack().getType()), this);
-        this.gameTeamBlue = new GameTeam("&9Blue", TeamColor.BLUE, TeamTabPrefix.BLUE_TAB_PREFIX, TeamChatPrefix.BLUE_CHAT_PREFIX, 2,  plugin.getPluginConfig().getTeamSpawnLocation("blue"), new Flag("&9Blue Flag", plugin.getPluginConfig().getTeamFlagSpawnLocation("blue"), GameItems.BLUE_FLAG.getItemStack().getType()), this);
+        this.gameTeamRed = new GameTeam("&cRed", TeamColor.RED, TeamTabPrefix.RED_TAB_PREFIX, TeamChatPrefix.RED_CHAT_PREFIX, 1,  plugin.getPluginConfig().getTeamSpawnLocation("red"), new Flag("&cRed Flag", plugin.getPluginConfig().getTeamFlagSpawnLocation("red"), PluginItems.RED_FLAG.getItemStack().getType()), this);
+        this.gameTeamBlue = new GameTeam("&9Blue", TeamColor.BLUE, TeamTabPrefix.BLUE_TAB_PREFIX, TeamChatPrefix.BLUE_CHAT_PREFIX, 2,  plugin.getPluginConfig().getTeamSpawnLocation("blue"), new Flag("&9Blue Flag", plugin.getPluginConfig().getTeamFlagSpawnLocation("blue"), PluginItems.BLUE_FLAG.getItemStack().getType()), this);
         gameTeamRed.getTeamFlag().setGameTeam(gameTeamRed);
         gameTeamBlue.getTeamFlag().setGameTeam(gameTeamBlue);
 
         this.arena = new Arena(plugin.getPluginConfig().getLobbySpawnLocation(), gameTeamRed, gameTeamBlue, plugin.getPluginConfig().getMinPlayers(), plugin.getPluginConfig().getMaxPlayers(), plugin.getPluginConfig().getGameStartCountdown());
         initLobbyItems();
+        this.kitSelectorMenu = new KitSelectorMenu();
+
         registerEvents();
+        registerCommands();
 
         LobbyGameState lobbyGameState = new LobbyGameState(this);
         lobbyGameState.init();
@@ -71,8 +80,8 @@ public class GameManager {
     public void setGameState(GameStates gameState) {
         //Checks if the new gameState is the same as the old gameState.
         if (GameManager.gameState == gameState) return;
-        //checks if the current gameState is active and the new gameState is not lobby or starting.
-        if (gameState == GameStates.ACTIVE && (gameState == GameStates.LOBBY)) return;
+        //checks if the current gameState is active and the new gameState is not lobby.
+        if (GameManager.gameState == GameStates.ACTIVE && (gameState == GameStates.LOBBY)) return;
 
         enabledGameStates.get(0).disable();
         enabledGameStates.clear();
@@ -99,6 +108,10 @@ public class GameManager {
 
     public Arena getArena() {
         return this.arena;
+    }
+
+    public KitSelectorMenu getKitSelectorMenu() {
+        return kitSelectorMenu;
     }
 
     public GameTeam getTeamRed() {
@@ -130,10 +143,16 @@ public class GameManager {
         pluginManager.registerEvents(new BlockPlaceListener(), plugin);
     }
 
+    private void registerCommands() {
+            plugin.getCommand("team").setExecutor(new TeamCommands(this));
+            plugin.getCommand("debug").setExecutor(new DebugCommands(this));
+            plugin.getCommand("kit").setExecutor(new KitCommands(this));
+    }
+
     public void initLobbyItems() {
         lobbyItems = new HashMap<>();
-        lobbyItems.put(3, GameItems.CHOOSE_RED_TEAM.getItemStack());
-        lobbyItems.put(5, GameItems.CHOOSE_BLUE_TEAM.getItemStack());
+        lobbyItems.put(3, PluginItems.CHOOSE_RED_TEAM.getItemStack());
+        lobbyItems.put(5, PluginItems.CHOOSE_BLUE_TEAM.getItemStack());
     }
 
     public void giveLobbyItems(Player player) {
@@ -181,9 +200,5 @@ public class GameManager {
             GameTeam gameTeam = whichTeamIsSmaller();
             gameTeam.addPlayerToTeam(gamePlayer, gameTeam);
         }
-    }
-
-    public CaptureTheFlag getPlugin() {
-        return plugin;
     }
 }

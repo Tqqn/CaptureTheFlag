@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -111,6 +112,50 @@ public class NMSUtils {
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void sendTitleMessage(Player player, String message, String subMessage, int fadeIn, int duration, int fadeOut) {
+        String titleMessage = "{\"text\":\""  + message + "\"}";
+        String titleSubMessage = "{\"text\":\"" + subMessage + "\"}";
+
+        Class<?> enumTitleActionClass = getNMSClass("PacketPlayOutTitle$EnumTitleAction");
+        Class<?> iChatBaseCompClass = getNMSClass("IChatBaseComponent");
+
+        Object chatSerializer;
+        Object chatSerializerSub;
+
+        Object enumTimes;
+        Object enumTitle;
+        Object enumSubTitle;
+
+        Object packetTimes;
+        Object packetTitleMessage;
+        Object packetSubTitleMessage;
+
+        try {
+            Method a = getNMSClass("IChatBaseComponent$ChatSerializer").getMethod("a", String.class);
+
+            chatSerializer = a.invoke(iChatBaseCompClass, titleMessage);
+            chatSerializerSub = a.invoke(iChatBaseCompClass, titleSubMessage);
+
+            enumTimes = enumTitleActionClass.getField("TIMES").get(null);
+            enumTitle = enumTitleActionClass.getField("TITLE").get(null);
+            enumSubTitle = enumTitleActionClass.getField("SUBTITLE").get(null);
+
+            Constructor<?> packetPlayOutTitleConstructor = getNMSClass("PacketPlayOutTitle").getConstructor(enumTitleActionClass, iChatBaseCompClass, int.class, int.class, int.class);
+
+            packetTimes = packetPlayOutTitleConstructor.newInstance(enumTimes, chatSerializer, fadeIn, duration, fadeOut);
+            packetTitleMessage = packetPlayOutTitleConstructor.newInstance(enumTitle, chatSerializer, fadeIn, duration, fadeOut);
+            packetSubTitleMessage = packetPlayOutTitleConstructor.newInstance(enumSubTitle, chatSerializerSub, fadeIn, duration, fadeOut);
+
+            sendPacket(player, packetTimes);
+            sendPacket(player, packetTitleMessage);
+            sendPacket(player, packetSubTitleMessage);
+
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
+            e.printStackTrace();
         }
     }
 }

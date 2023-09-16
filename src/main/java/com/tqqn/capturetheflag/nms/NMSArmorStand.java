@@ -22,7 +22,6 @@ public class NMSArmorStand {
     Class<?> entityLivingClass = NMSUtils.getNMSClass("EntityLiving");
     Class<?> entityClass = NMSUtils.getNMSClass("Entity");
 
-    Class<?> entityItemClass = NMSUtils.getNMSClass("EntityItem");
     Class<?> iChatBaseCompClass = NMSUtils.getNMSClass("IChatBaseComponent");
     Class<?> craftWorldClass = NMSUtils.getCraftBukkitClass("CraftWorld");
     Class<?> NMSWorldClass = NMSUtils.getNMSClass("World");

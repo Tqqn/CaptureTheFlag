@@ -1,6 +1,5 @@
 package com.tqqn.capturetheflag.utils;
 
-import com.tqqn.capturetheflag.data.GamePoints;
 import org.bukkit.ChatColor;
 
 public enum SMessages {
@@ -62,7 +61,9 @@ public enum SMessages {
     SCOREBOARD_KILLS_ASSISTS("&fKills: &l%s &r&fAssists: &l%s"),
     POWERUP_PICKUP("&eYou picked up the &l%s &r&e!"),
 
-    SETUPWIZARD_SELECTED_LOCATION("&eYou selected the %s &elocation!");
+    SETUPWIZARD_SELECTED_LOCATION("&eYou selected the %s &elocation!"),
+    KIT_CHOOSE("&eYou selected the %s &ekit!"),
+    RESPAWN_TIMER_MESSAGE("&eYou are respawning in &l&f%s &r&eseconds!");
 
     private final String message;
 
