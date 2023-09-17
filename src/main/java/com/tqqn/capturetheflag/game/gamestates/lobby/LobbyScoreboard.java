@@ -20,7 +20,7 @@ public class LobbyScoreboard extends BukkitRunnable implements PluginScoreboard 
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getScoreboard() != null && player.getScoreboard().getObjective("lobbyBoard") != null) {
+            if (player.getScoreboard().getObjective("lobbyBoard") != null) {
                 updateScoreboard(player);
             } else {
                 createNewScoreboard(player);

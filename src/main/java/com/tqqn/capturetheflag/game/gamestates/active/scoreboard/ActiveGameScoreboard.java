@@ -1,5 +1,6 @@
 package com.tqqn.capturetheflag.game.gamestates.active.scoreboard;
 
+import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.game.data.GamePlayer;
 import com.tqqn.capturetheflag.game.data.GamePoints;
 import com.tqqn.capturetheflag.game.GameManager;
@@ -45,7 +46,7 @@ public class ActiveGameScoreboard extends BukkitRunnable implements PluginScoreb
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getScoreboard() != null && player.getScoreboard().getObjective("activeBoard") != null) {
+            if (player.getScoreboard().getObjective("activeBoard") != null) {
                 updateScoreboard(player);
             } else {
                 createNewScoreboard(player);
@@ -113,7 +114,7 @@ public class ActiveGameScoreboard extends BukkitRunnable implements PluginScoreb
 
     public void updateScoreboard(Player player) {
         Scoreboard scoreboard = player.getScoreboard();
-        GamePlayer gamePlayer = gameManager.getArena().getGamePlayer(player.getUniqueId());
+        GamePlayer gamePlayer = Arena.getGamePlayer(player.getUniqueId());
 
         Team teamBluePoints = scoreboard.getTeam(teamBluePointsTeam);
         teamBluePoints.setSuffix(GameUtils.translateColor("&b" + gameManager.getTeamBlue().getPoints() + "&6/" + GamePoints.POINTS_NEEDED_TO_WIN.getPoints()));

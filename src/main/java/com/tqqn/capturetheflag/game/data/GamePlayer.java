@@ -19,10 +19,7 @@ import java.util.*;
 
 public class GamePlayer {
 
-    private final UUID uuid;
-
     private final Player player;
-    private final String playerName;
     private boolean isSpectator = false;
     private GameTeam gameTeam = null;
     private final Set<GamePlayer> assistPlayers = new HashSet<>();
@@ -36,9 +33,7 @@ public class GamePlayer {
     private int assists = 0;
 
     public GamePlayer(Player player) {
-        this.uuid = player.getUniqueId();
         this.player = player;
-        this.playerName = player.getName();
     }
 
     public void spawn(Location location) {
@@ -48,8 +43,6 @@ public class GamePlayer {
             }
         }
         TabScoreboardManager.setPlayerTabTeam(this, "");
-        player.setFlying(false);
-        player.setAllowFlight(false);
         player.teleport(location);
         player.setHealth(player.getMaxHealth());
         player.setFoodLevel(20);
@@ -124,6 +117,7 @@ public class GamePlayer {
     public Set<GamePlayer> getAssistPlayersSet() {
         return assistPlayers;
     }
+
 
     public boolean isSpectator() {
         return isSpectator;

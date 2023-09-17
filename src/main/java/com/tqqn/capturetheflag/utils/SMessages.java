@@ -63,7 +63,8 @@ public enum SMessages {
 
     SETUPWIZARD_SELECTED_LOCATION("&eYou selected the %s &elocation!"),
     KIT_CHOOSE("&eYou selected the %s &ekit!"),
-    RESPAWN_TIMER_MESSAGE("&eYou are respawning in &l&f%s &r&eseconds!");
+    RESPAWN_TIMER_MESSAGE("&eYou are respawning in &l&f%s &r&eseconds!"),
+    RESPAWN_TIMER_SUBTITLE("&l&f%s &r&eseconds!");
 
     private final String message;
 
