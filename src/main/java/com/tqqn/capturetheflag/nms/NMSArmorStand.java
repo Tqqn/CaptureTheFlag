@@ -1,7 +1,7 @@
 package com.tqqn.capturetheflag.nms;
 
 import com.tqqn.capturetheflag.utils.GameUtils;
-import net.minecraft.server.v1_16_R3.EntityItem;
+import net.minecraft.server.v1_16_R3.PacketPlayOutMount;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

@@ -2,12 +2,13 @@ package com.tqqn.capturetheflag.game.flag;
 
 import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.game.GameManager;
+import com.tqqn.capturetheflag.game.data.GamePlayer;
 import com.tqqn.capturetheflag.nms.NMSArmorStand;
 import com.tqqn.capturetheflag.game.teams.GameTeam;
+import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.NMessages;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import com.tqqn.capturetheflag.utils.SMessages;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -19,15 +20,17 @@ public class Flag {
     private GameTeam gameTeam;
     private final Location spawnLocation;
     private final Material flagMaterial;
+    private final Particle.DustOptions dustOptions;
     private FlagStatus flagStatus = FlagStatus.SAFE;
     private Location currentLocation;
 
     private final Collection<NMSArmorStand> spawnedHolograms = new ArrayList<>();
 
-    public Flag(String displayName, Location spawnLocation, Material flagMaterial) {
+    public Flag(String displayName, Location spawnLocation, Material flagMaterial, Particle.DustOptions dustOptions) {
         this.displayName = displayName;
         this.spawnLocation = spawnLocation;
         this.flagMaterial = flagMaterial;
+        this.dustOptions = dustOptions;
     }
 
     public void spawnFlagOnSpawn() {
@@ -39,12 +42,33 @@ public class Flag {
         GameManager.addSpawnedFlag(this);
     }
 
-    public void spawnFlagOnDrop(Location location) {
-        location.setY(location.getWorld().getHighestBlockYAt(location)+1);
+    public void spawnFlagOnDrop(Location location, GamePlayer gamePlayer) {
+        if (location.getY() <= -1) {
+            spawnFlagOnSpawn();
+            GameUtils.broadcastMessage(SMessages.FLAG_SPAWNED_BECAUSE_OF_VOID.getMessage(displayName, gamePlayer.getPlayer().getName()));
+            return;
+        }
+
+        if (!(location.getY()+1 != location.getWorld().getHighestBlockYAt(location)+1)) {
+            location.setY(location.getWorld().getHighestBlockYAt(location)+1);
+        }
+
+        if (location.getBlock().getType() != Material.AIR) {
+            location.setY(location.getY()+1);
+        }
+
+        if (location.getWorld().getHighestBlockYAt(location) == -1) {
+            spawnFlagOnSpawn();
+            GameUtils.broadcastMessage(SMessages.FLAG_SPAWNED_BECAUSE_OF_VOID.getMessage(displayName, gamePlayer.getPlayer().getName()));
+            return;
+        }
+
+
         currentLocation = location;
 
         flagStatus = FlagStatus.DROPPED;
         spawnFlagHologram(currentLocation);
+        System.out.println("Dropped flag at " + currentLocation);
 
         location.getBlock().setType(flagMaterial);
         GameManager.addSpawnedFlag(this);
@@ -54,7 +78,6 @@ public class Flag {
         if (currentLocation != null) currentLocation.getBlock().setType(Material.AIR);
         spawnedHolograms.forEach(NMSArmorStand::sendDestroyArmorStandPacketToPlayer);
         spawnedHolograms.clear();
-        currentLocation = null;
         GameManager.removeSpawnedFlag(this);
     }
 
@@ -92,6 +115,10 @@ public class Flag {
 
     public Material getFlagMaterial() {
         return flagMaterial;
+    }
+
+    public Particle.DustOptions getFlagDustOptions() {
+        return dustOptions;
     }
 
     public FlagStatus getFlagStatus() {

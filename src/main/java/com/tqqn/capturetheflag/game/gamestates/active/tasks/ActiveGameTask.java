@@ -4,13 +4,14 @@ import com.tqqn.capturetheflag.game.data.GamePoints;
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.GameStates;
 import com.tqqn.capturetheflag.utils.GameUtils;
+import com.tqqn.capturetheflag.utils.PluginSounds;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class ActiveGameTask extends BukkitRunnable {
 
 
-    private static int time = 120;
+    private static int time = 560;
     private int pointTime = 0;
     private final GameManager gameManager;
 
@@ -28,6 +29,7 @@ public final class ActiveGameTask extends BukkitRunnable {
 
         if (time <= 10) {
             GameUtils.broadcastMessage(SMessages.GAME_END_COUNTDOWN.getMessage(String.valueOf(time)));
+            PluginSounds.COUNTDOWN_SOUND.playSoundForAll();
         }
 
         if (time == 0) {

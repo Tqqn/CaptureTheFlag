@@ -1,11 +1,13 @@
 package com.tqqn.capturetheflag.game.teams;
 
+import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.game.data.GamePlayer;
 import com.tqqn.capturetheflag.game.data.GamePoints;
 import com.tqqn.capturetheflag.game.flag.Flag;
 import com.tqqn.capturetheflag.game.flag.FlagStatus;
 import com.tqqn.capturetheflag.game.GameManager;
+import com.tqqn.capturetheflag.game.gamestates.active.tasks.FlagCarrierTask;
 import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.Location;
@@ -25,7 +27,6 @@ public class GameTeam {
     private final Location spawnLocation;
     private final Flag teamFlag;
     private final GameManager gameManager;
-
     private final Collection<GamePlayer> members = new ArrayList<>();
     private int points = 0;
 
@@ -76,6 +77,9 @@ public class GameTeam {
         teamFlag.removeFlag();
         teamFlag.setFlagStatus(FlagStatus.STOLEN);
         Arena.getGamePlayer(player.getUniqueId()).giveFlag(teamFlag);
+        GameUtils.broadcastMessage(SMessages.FLAG_STOLE.getMessage(Arena.getGamePlayer(player.getUniqueId()).getTeam().teamColor.getColor(), player.getName(), teamChatPrefix.getPrefix()));
+        FlagCarrierTask flagCarrierTask = new FlagCarrierTask(teamFlag, Arena.getGamePlayer(player.getUniqueId()));
+        flagCarrierTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 10L);
     }
 
     public void returnFlag(Player player) {
@@ -83,9 +87,9 @@ public class GameTeam {
         teamFlag.spawnFlagOnSpawn();
         GameUtils.broadcastMessage(SMessages.FLAG_RETURNED.getMessage(teamColor.getColor(), player.getName(), teamChatPrefix.getPrefix()));
     }
-
     public void dropFlag(Player player) {
-        teamFlag.spawnFlagOnDrop(player.getLocation().getBlock().getLocation());
+        GameUtils.broadcastMessage(SMessages.FLAG_DROPPED.getMessage(teamColor.getColor(), player.getName(), teamChatPrefix.getPrefix()));
+        teamFlag.spawnFlagOnDrop(player.getLocation().getBlock().getLocation(), Arena.getGamePlayer(player.getUniqueId()));
     }
 
     public String getDisplayName() {

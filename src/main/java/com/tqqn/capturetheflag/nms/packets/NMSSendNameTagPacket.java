@@ -15,7 +15,7 @@ public class NMSSendNameTagPacket {
     public static void sendNameTagPlayers(Player player, String color, String prefix, String suffix, Player players, int priority) {
 
         String playerNameMessage = "{\"text\":\"" + player.getName() + "\"}";
-        String prefixMessage = "{\"text\":\"" + prefix + "\"}";
+        String prefixMessage = "{\"text\":\"" + prefix + " \"}";
         String suffixMessage = "{\"text\":\"" + suffix + "\"}";
 
         Class<?> iChatBaseCompClass = NMSUtils.getNMSClass("IChatBaseComponent");

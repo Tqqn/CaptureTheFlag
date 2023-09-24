@@ -1,8 +1,8 @@
 package com.tqqn.capturetheflag.nms;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -60,43 +60,39 @@ public class NMSUtils {
         }
     }
 
-    public static Object applyNMSTag(Object nmsItemStack, String tagName, String tagValue) {
+    public static ItemStack applyNMSTag(ItemStack itemStack, String tagName, String tagValue) {
         try {
-            Method getOrCreateTag = nmsItemStack.getClass().getMethod("getOrCreateTag");
-            Object nbtTagCompound = getOrCreateTag.invoke(nmsItemStack);
+            Method asNMSCopy = getCraftBukkitClass("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class);
+            Object nmsItemStack = asNMSCopy.invoke(null, itemStack);
 
-            Method setString = nbtTagCompound.getClass().getMethod("setString", String.class, String.class);
-            setString.invoke(nbtTagCompound, tagName, tagValue);
-
-            Method setTag = nmsItemStack.getClass().getMethod("setTag");
-            setTag.invoke(nbtTagCompound);
-            return nmsItemStack;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    //net.minecraft.server.v1_16_R3.ItemStack
-    public static Object applyNMSTag(Object nmsItemStack, String tagName, int tagValue) {
-        try {
+            System.out.println(nmsItemStack.toString());
 
             Method getOrCreateTag = nmsItemStack.getClass().getDeclaredMethod("getOrCreateTag");
             Object nbtTagCompound = getOrCreateTag.invoke(nmsItemStack);
 
-            Method setString = nbtTagCompound.getClass().getMethod("setInt", String.class, int.class);
+            System.out.println(nbtTagCompound.toString());
+
+            Method setString = nbtTagCompound.getClass().getMethod("setString", String.class, String.class);
             setString.invoke(nbtTagCompound, tagName, tagValue);
+
+            System.out.println(nbtTagCompound);
 
             Method setTag = nmsItemStack.getClass().getMethod("setTag", getNMSClass("NBTTagCompound"));
             setTag.invoke(nmsItemStack, nbtTagCompound);
-            return nmsItemStack;
+
+            Method asBukkitCopy = getCraftBukkitClass("inventory.CraftItemStack").getMethod("asBukkitCopy", getNMSClass("ItemStack"));
+            return (ItemStack) asBukkitCopy.invoke(null, nmsItemStack);
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }
     }
-    public static String getNBTTag(Object nmsItemStack, String key) {
+
+    public static String getNBTTag(ItemStack itemStack, String key) {
         try {
+            Method asNMSCopy = getCraftBukkitClass("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class);
+            Object nmsItemStack = asNMSCopy.invoke(null, itemStack);
 
             Method hasTag = nmsItemStack.getClass().getMethod("hasTag");
             boolean hasTagResult = (boolean) hasTag.invoke(nmsItemStack);

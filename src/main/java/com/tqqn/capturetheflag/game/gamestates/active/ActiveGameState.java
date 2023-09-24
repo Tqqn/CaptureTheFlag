@@ -3,32 +3,41 @@ package com.tqqn.capturetheflag.game.gamestates.active;
 import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.game.data.GamePlayer;
+import com.tqqn.capturetheflag.game.data.GamePoints;
 import com.tqqn.capturetheflag.game.flag.Flag;
 import com.tqqn.capturetheflag.game.flag.FlagStatus;
 import com.tqqn.capturetheflag.game.AbstractGameState;
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.GameStates;
+import com.tqqn.capturetheflag.game.gamestates.active.tasks.CompassLocatorTask;
 import com.tqqn.capturetheflag.game.gamestates.active.tasks.RespawnTask;
 import com.tqqn.capturetheflag.game.gamestates.active.scoreboard.ActiveGameScoreboard;
 import com.tqqn.capturetheflag.game.gamestates.active.tasks.ActiveGameTask;
 import com.tqqn.capturetheflag.game.tab.TabScoreboardManager;
+import com.tqqn.capturetheflag.nms.NMSUtils;
 import com.tqqn.capturetheflag.utils.GameUtils;
+import com.tqqn.capturetheflag.utils.PluginSounds;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class ActiveGameState extends AbstractGameState {
 
     private final GameManager gameManager;
     private ActiveGameTask activeGameTask;
+    private CompassLocatorTask compassLocatorTask;
 
     public ActiveGameState(GameManager gameManager) {
         super("Active");
@@ -45,10 +54,14 @@ public class ActiveGameState extends AbstractGameState {
         ActiveGameScoreboard activeGameScoreboard = new ActiveGameScoreboard(gameManager);
         activeGameScoreboard.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
 
-        this.activeGameTask = new ActiveGameTask(gameManager);
-        this.activeGameTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
+        activeGameTask = new ActiveGameTask(gameManager);
+        activeGameTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
+
+        compassLocatorTask = new CompassLocatorTask(gameManager);
+        compassLocatorTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 10L);
 
         gameManager.getArena().spawnRandomPowerUp();
+        PluginSounds.START_GAME.playSoundForAll();
     }
 
     @Override
@@ -60,7 +73,7 @@ public class ActiveGameState extends AbstractGameState {
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof Player)) return;
         if (GameManager.getGameStates() == GameStates.ACTIVE) {
-            if (Arena.getGamePlayer(event.getEntity().getUniqueId()).isSpectator()) {
+            if (Arena.getGamePlayer(event.getEntity().getUniqueId()).isSpectator() || Arena.getGamePlayer(event.getDamager().getUniqueId()).isSpectator()) {
                 event.setCancelled(true);
                 return;
             }
@@ -77,8 +90,12 @@ public class ActiveGameState extends AbstractGameState {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
+
+        event.getDrops().clear();
+
         GamePlayer gamePlayer = Arena.getGamePlayer(player.getUniqueId());
         event.setDeathMessage("");
+        PluginSounds.PLAYER_DEATH.playSound(player);
 
         if (player.getKiller() == null || player.getKiller() == player) {
             GameUtils.broadcastMessage(SMessages.PLAYER_DEATH.getMessage(gamePlayer.getTeam().getTeamColor().getColor() + player.getName()));
@@ -86,16 +103,14 @@ public class ActiveGameState extends AbstractGameState {
             GamePlayer killer = Arena.getGamePlayer(player.getKiller().getUniqueId());
             GameUtils.broadcastMessage(SMessages.PLAYER_DEATH_BY_PLAYER.getMessage(gamePlayer.getTeam().getTeamColor().getColor() + player.getName(), killer.getTeam().getTeamColor().getColor() + killer.getPlayer().getName()));
             killer.addKill();
+            killer.getTeam().addPoints(GamePoints.PLAYER_KILL.getPoints());
         }
 
         for (GamePlayer assistDamager : gamePlayer.getAssistPlayersSet()) {
-            if (assistDamager.getPlayer() == player.getKiller()) return;
-            assistDamager.addAssist();
+            if (!(assistDamager.getPlayer() == player.getKiller())) assistDamager.addAssist();
         }
 
         gamePlayer.getAssistPlayersSet().clear();
-
-        event.getDrops().clear();
 
         if (Arena.getGamePlayer(player.getUniqueId()).hasFlag()) {
             gamePlayer.getFlag().getGameTeam().dropFlag(player);
@@ -119,14 +134,54 @@ public class ActiveGameState extends AbstractGameState {
                 if (gamePlayer.getTeam() == flag.getGameTeam()) { //SAME TEAM
                     if (flag.getFlagStatus() == FlagStatus.DROPPED) { //OWN FLAG IS DROPPED, RETURN
                         gamePlayer.getTeam().returnFlag(player);
+                        PluginSounds.OWN_FLAG_RETURNED.playSoundToTeam(gamePlayer.getTeam());
+                        PluginSounds.ENEMY_FLAG_RETURNED.playSoundToTeam(gameManager.getEnemyTeam(gamePlayer));
                         return;
                     }
                     if (!gamePlayer.hasFlag()) return; //IF PLAYER HAS ENEMY FLAG, CAPTURE
                     gamePlayer.getTeam().captureEnemyFlag(player, gamePlayer.getFlag());
+                    PluginSounds.ENEMY_FLAG_CAPTURED.playSoundToTeam(gamePlayer.getTeam());
+                    PluginSounds.OWN_FLAG_CAPTURED.playSoundToTeam(gameManager.getEnemyTeam(gamePlayer));
                     return;
                 }
 
                 flag.getGameTeam().pickupFlag(player);
+                PluginSounds.ENEMY_FLAG_STOLEN.playSoundToTeam(gamePlayer.getTeam());
+                PluginSounds.OWN_FLAG_STOLEN.playSoundToTeam(gameManager.getEnemyTeam(gamePlayer));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCompassInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+            if (event.getItem() != null) {
+                if (event.getItem().getType() == Material.COMPASS) {
+                    String targetName = "";
+                    ItemStack compass = event.getItem();
+                    System.out.println("1 " + NMSUtils.getNBTTag(compass, "flagSelected"));
+
+                    switch (NMSUtils.getNBTTag(compass, "flagSelected").replace("\"", "")) {
+                        case "red":
+                            compass.setItemMeta(NMSUtils.applyNMSTag(compass, "flagSelected", "blue").getItemMeta());
+                            targetName = GameUtils.translateColor("&bTargeting: &9Blue Flag");
+                            System.out.println("2 " + NMSUtils.getNBTTag(compass, "flagSelected"));
+                            break;
+                        case "blue":
+                            compass.setItemMeta(NMSUtils.applyNMSTag(compass, "flagSelected", "red").getItemMeta());
+                            targetName = GameUtils.translateColor("&bTargeting: &cRed Flag");
+                            System.out.println("3 " + NMSUtils.getNBTTag(compass, "flagSelected"));
+                            break;
+                        case "none":
+                            compass.setItemMeta(NMSUtils.applyNMSTag(compass, "flagSelected", "blue").getItemMeta());
+                            targetName = GameUtils.translateColor("&bTargeting: &9Blue Flag");
+                            System.out.println("4 " + NMSUtils.getNBTTag(compass, "flagSelected"));
+                    }
+                    ItemMeta itemMeta = compass.getItemMeta();
+                    itemMeta.setDisplayName(targetName);
+                    compass.setItemMeta(itemMeta);
+                    System.out.println("5 " + NMSUtils.getNBTTag(compass, "flagSelected"));
+                }
             }
         }
     }
@@ -147,13 +202,15 @@ public class ActiveGameState extends AbstractGameState {
         GamePlayer gamePlayer = Arena.getGamePlayer(event.getPlayer().getUniqueId());
         RespawnTask respawnTask = new RespawnTask(gamePlayer);
         respawnTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
+
         if (gamePlayer.getPlayer().getKiller() != null) {
             event.setRespawnLocation(gamePlayer.getPlayer().getKiller().getLocation());
-            return;
+        } else {
+            event.setRespawnLocation(gamePlayer.getTeam().getSpawnLocation());
         }
-        event.setRespawnLocation(gamePlayer.getTeam().getSpawnLocation());
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CaptureTheFlag.getInstance(), gamePlayer::setSpectator,2L);
+        gamePlayer.setSpectator();
+        Bukkit.getScheduler().runTaskLater(CaptureTheFlag.getInstance(), gamePlayer::setSpectator, 1L);
     }
 
     @EventHandler
@@ -161,5 +218,17 @@ public class ActiveGameState extends AbstractGameState {
         if (!(event.getEntity() instanceof Player)) return;
         Player player = (Player) event.getEntity();
         if (Arena.getGamePlayer(player.getUniqueId()).isSpectator()) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onAsyncChat(AsyncPlayerChatEvent event) {
+        event.setCancelled(true);
+        GamePlayer gamePlayer = Arena.getGamePlayer(event.getPlayer().getUniqueId());
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (gamePlayer.getTeam() == Arena.getGamePlayer(player.getUniqueId()).getTeam()) {
+                player.sendMessage(SMessages.TEAM_CHAT_MESSAGE_FORMAT.getMessage(gamePlayer.getTeam().getTeamTabPrefix().getPrefix(), gamePlayer.getPlayer().getName(), event.getMessage()));
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -62,8 +63,8 @@ public class Arena {
         }
     }
 
-    public int getMinimumPlayers() {
-        return minimumPlayers;
+    public String getMinimumPlayers() {
+        return String.valueOf(minimumPlayers);
     }
 
     public int getMaximumPlayers() {
@@ -84,6 +85,13 @@ public class Arena {
             playerList.add(gamePlayer.getPlayer());
         }
         return playerList;
+    }
+
+    public int getPlayersToStart() {
+        if (minimumPlayers >= inGamePlayers.size()) {
+            return minimumPlayers - inGamePlayers.size();
+        }
+        return 0;
     }
 
     public Collection<GamePlayer> getGamePlayers() {
@@ -107,8 +115,8 @@ public class Arena {
         inGamePlayers.put(gamePlayer.getPlayer().getUniqueId(), gamePlayer);
     }
 
-    public void setSpectator(Player player) {
-
+    public boolean canStart() {
+        return (inGamePlayers.size() >= minimumPlayers);
     }
 
     public void removePlayerFromGame(Player player) {
@@ -180,7 +188,7 @@ public class Arena {
         powerUp.setLocation(getRandomPowerUpSpawnLocation());
         powerUp.setPowerUp();
         ActivePowerUpTask activePowerUpTask = new ActivePowerUpTask(powerUp);
-        activePowerUpTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 10);
+        activePowerUpTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 2L);
     }
 
     public PowerUp getRandomPowerUp() {

@@ -14,7 +14,7 @@ public enum NMessages {
 
     FLAG_ITEM_HOLOGRAM_SELF("&eDefend the Flag from the enemy team!"),
     FLAG_ITEM_HOLOGRAM_RETURN("&e[RIGHT/LEFT-CLICK] &6To return your Flag!"),
-    ACTIVE_SCOREBOARD_TITLE("&c&lCAPTURE &9&lTHE FLAG"),
+    GAME_SCOREBOARD_TITLE("&c&lCAPTURE &9&lTHE FLAG"),
     POWERUP_SPEED("&b&lSpeed PowerUp"),
     POWERUP_STRENGHT("&c&lStrenght PowerUp"),
     POWERUP_JUMP("&a&lJump PowerUp"),
@@ -26,7 +26,10 @@ public enum NMessages {
     SETUPWIZARD_LOCATION_NULL("&cError! One or more locations are null. Please select the locations."),
     KIT_SAME_KIT("&cYou already have chosen this kit!"),
     RESPAWN_TIMER_TITLE("&eYou are respawning in"),
-    RESPAWN_MESSAGE_TITLE("&eYou respawned!");
+    RESPAWN_MESSAGE_TITLE("&eYou respawned!"),
+    LOBBY_NOT_ENOUGH_PLAYERS("&cNot enough players to start. Setting timer back to 5 minutes."),
+
+    TEAM_IS_FULL("&cThis team is already full. Pick an other team.");
     private final String message;
 
     NMessages(String message) {

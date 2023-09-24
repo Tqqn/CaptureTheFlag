@@ -19,3 +19,7 @@ commands:
     description: Kit Commands
     usage: /<command>
     permission: ctf.kit
+  shout:
+    description: Kit Commands
+    usage: /<command>
+    permission: ctf.shout

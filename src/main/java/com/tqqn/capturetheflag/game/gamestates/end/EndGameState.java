@@ -6,6 +6,7 @@ import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.gamestates.end.tasks.EndGameTask;
 import com.tqqn.capturetheflag.game.teams.GameTeam;
 import com.tqqn.capturetheflag.utils.GameUtils;
+import com.tqqn.capturetheflag.utils.PluginSounds;
 import com.tqqn.capturetheflag.utils.SMessages;
 
 public class EndGameState extends AbstractGameState {
@@ -21,6 +22,14 @@ public class EndGameState extends AbstractGameState {
     public void register() {
         if (gameManager.getArena().whoIsWinner() != null) {
             GameTeam gameTeam = gameManager.getArena().whoIsWinner();
+            PluginSounds.WIN_GAME.playSoundToTeam(gameTeam);
+
+            if (gameTeam == gameManager.getTeamRed()) {
+                PluginSounds.LOSE_GAME.playSoundToTeam(gameManager.getTeamBlue());
+            } else {
+                PluginSounds.LOSE_GAME.playSoundToTeam(gameManager.getTeamRed());
+            }
+
             GameUtils.broadcastMessage(SMessages.TEAM_WIN.getMessage(gameTeam.getTeamColor().getColor(), gameTeam.getDisplayName()));
         } else {
             GameUtils.broadcastMessage("Draw.");

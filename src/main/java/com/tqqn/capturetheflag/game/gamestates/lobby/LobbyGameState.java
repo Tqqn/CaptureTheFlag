@@ -6,19 +6,22 @@ import com.tqqn.capturetheflag.game.data.GamePlayer;
 import com.tqqn.capturetheflag.game.AbstractGameState;
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.GameStates;
+import com.tqqn.capturetheflag.game.gamestates.lobby.tasks.LobbyWaitingGameTask;
 import com.tqqn.capturetheflag.items.PluginItems;
-import com.tqqn.capturetheflag.game.gamestates.lobby.tasks.StartGameTask;
 import com.tqqn.capturetheflag.utils.GameUtils;
+import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class LobbyGameState extends AbstractGameState {
 
     private final GameManager gameManager;
-
+    private LobbyWaitingGameTask lobbyWaitingGameTask;
+    private LobbyScoreboard lobbyScoreboard;
 
     public LobbyGameState(GameManager gameManager) {
         super("Lobby");
@@ -26,10 +29,22 @@ public class LobbyGameState extends AbstractGameState {
     }
     @Override
     public void register() {
+        this.lobbyWaitingGameTask = new LobbyWaitingGameTask(gameManager);
+        lobbyWaitingGameTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
+
+        this.lobbyScoreboard = new LobbyScoreboard(gameManager);
+        lobbyScoreboard.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
     }
 
     @Override
     public void unRegister() {
+        lobbyWaitingGameTask.cancel();
+        lobbyScoreboard.cancel();
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        event.setCancelled(true);
     }
 
 
@@ -44,24 +59,33 @@ public class LobbyGameState extends AbstractGameState {
                     player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
                     return;
                 }
-                if (gamePlayer.getTeam() != null) {
-                    gamePlayer.getTeam().removePlayerFromTeam(gamePlayer);
-                }
 
-                gameManager.getTeamRed().addPlayerToTeam(gamePlayer, gameManager.getTeamRed());
-                player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
+                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamRed()) {
+                    if (gamePlayer.getTeam() != null) {
+                        gamePlayer.getTeam().removePlayerFromTeam(gamePlayer);
+                    }
+
+                    gameManager.getTeamRed().addPlayerToTeam(gamePlayer, gameManager.getTeamRed());
+                    player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
+                    return;
+                }
 
             } else if (PluginItems.CHOOSE_BLUE_TEAM.getItemStack().isSimilar(event.getItem())) {
                 if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamBlue()) {
                     player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
                     return;
                 }
-                if (gamePlayer.getTeam() != null) {
-                    gamePlayer.getTeam().removePlayerFromTeam(gamePlayer);
+
+                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamBlue()) {
+                    if (gamePlayer.getTeam() != null) {
+                        gamePlayer.getTeam().removePlayerFromTeam(gamePlayer);
+                    }
+                    gameManager.getTeamBlue().addPlayerToTeam(gamePlayer, gameManager.getTeamBlue());
+                    player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
+                    return;
                 }
-                gameManager.getTeamBlue().addPlayerToTeam(gamePlayer, gameManager.getTeamBlue());
-                player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
             }
+            player.sendMessage(NMessages.TEAM_IS_FULL.getMessage());
         }
     }
 
@@ -69,18 +93,13 @@ public class LobbyGameState extends AbstractGameState {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        gameManager.getArena().addNewPlayer(player);
         event.setJoinMessage("");
-        GameUtils.broadcastMessage(SMessages.PLAYER_JOIN.getMessage(player.getDisplayName(), String.valueOf(gameManager.getArena().getInGamePlayers().size()), String.valueOf(gameManager.getArena().getMaximumPlayers())));
+
         player.teleport(gameManager.getArena().getLobbyLocation());
+        gameManager.getArena().addNewPlayer(player);
+        GameUtils.broadcastMessage(SMessages.PLAYER_JOIN.getMessage(player.getDisplayName(), String.valueOf(gameManager.getArena().getInGamePlayers().size()), String.valueOf(gameManager.getArena().getMaximumPlayers())));
         gameManager.giveLobbyItems(player);
 
-        if (GameManager.getGameStates() == GameStates.LOBBY) {
-            if (gameManager.getArena().getGamePlayers().size()+1 > gameManager.getArena().getMinimumPlayers()) {
-                StartGameTask startGameTask = new StartGameTask(gameManager);
-                startGameTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
-                GameUtils.broadcastMessage(SMessages.GAME_START_COUNTDOWN.getMessage("10"));
-            }
-        }
+
     }
 }

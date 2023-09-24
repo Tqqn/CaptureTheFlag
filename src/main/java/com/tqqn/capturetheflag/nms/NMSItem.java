@@ -5,20 +5,22 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.*;
 
 public class NMSItem {
 
     private final ItemStack itemStack;
 
     private int entityId = 0;
+    private final Player player;
 
     Class<?> packetPlayOutSpawnEntityClass = NMSUtils.getNMSClass("PacketPlayOutSpawnEntity");
     Class<?> packetPlayOutEntityMetaClass = NMSUtils.getNMSClass("PacketPlayOutEntityMetadata");
     Class<?> packetPlayOutEntityDestroyClass = NMSUtils.getNMSClass("PacketPlayOutEntityDestroy");
-    Class<?> packetPlayOutAttachEntityClass = NMSUtils.getNMSClass("PacketPlayOutAttachEntity");
     Class<?> entityItemClass = NMSUtils.getNMSClass("EntityItem");
     Class<?> entityClass = NMSUtils.getNMSClass("Entity");
     Class<?> nmsItemStackClass = NMSUtils.getNMSClass("ItemStack");
@@ -27,11 +29,12 @@ public class NMSItem {
     Class<?> NMSWorldClass = NMSUtils.getNMSClass("World");
     Object entityItem;
 
-    public NMSItem(ItemStack itemStack) {
+    public NMSItem(ItemStack itemStack, Player player) {
         this.itemStack = itemStack;
+        this.player = player;
     }
 
-    public void sendSpawnItemPacketToPlayer(Player player, Location location) {
+    public void sendSpawnItemPacketToPlayer(Location location) {
         try {
             if (entityId != 0) {
                 sendDestroyItemPacketToPlayer();
@@ -68,11 +71,9 @@ public class NMSItem {
 
     public void sendDestroyItemPacketToPlayer() {
         try {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                Constructor<?> packetPlayOutEntityDestroyConstructor = packetPlayOutEntityDestroyClass.getConstructor(int[].class);
-                int[] entityIds = new int[]{entityId};
-                NMSUtils.sendPacket(player, packetPlayOutEntityDestroyConstructor.newInstance(entityIds));
-            }
+            Constructor<?> packetPlayOutEntityDestroyConstructor = packetPlayOutEntityDestroyClass.getConstructor(int[].class);
+            int[] entityIds = new int[]{entityId};
+            NMSUtils.sendPacket(player, packetPlayOutEntityDestroyConstructor.newInstance(entityIds));
             entityId = 0;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException exception) {
             exception.printStackTrace();

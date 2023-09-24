@@ -1,4 +1,4 @@
-package com.tqqn.capturetheflag.game.listeners.global;
+package com.tqqn.capturetheflag.game.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

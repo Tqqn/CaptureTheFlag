@@ -7,7 +7,7 @@ public enum SMessages {
     /**
      * Placeholder: Seconds
      */
-    GAME_START_COUNTDOWN("&cGame is starting in &f%s"),
+    GAME_START_COUNTDOWN("&cGame is starting in &f%s &cseconds."),
 
     /**
      * Placeholder: Seconds
@@ -50,8 +50,11 @@ public enum SMessages {
      */
     ALREADY_IN_TEAM("&fYou are already a part of Team %s&f!"),
 
-    ENEMY_FLAG_CAPTURE("%s&l%s &ehas captured the %s&eflag!"),
-    FLAG_RETURNED("%s&l%s &ehas returned the %s&eflag!"),
+    ENEMY_FLAG_CAPTURE("%s&l%s &r&ehas captured the %s&eflag!"),
+    FLAG_RETURNED("%s&l%s &r&ehas returned the %s&eflag!"),
+    FLAG_STOLE("%s&l%s &r&ehas stolen the %s&eflag!"),
+    FLAG_DROPPED("%s&l%s &r&ehas dropped the %s&eflag!"),
+    FLAG_SPAWNED_BECAUSE_OF_VOID("&l%s &r&ehas been returned, because &l%s &r&efell in the void!"),
 
     FLAG_RESET_COUNTDOWN("&2Flags are resetting in &f&l%s&r&2..."),
 
@@ -64,7 +67,9 @@ public enum SMessages {
     SETUPWIZARD_SELECTED_LOCATION("&eYou selected the %s &elocation!"),
     KIT_CHOOSE("&eYou selected the %s &ekit!"),
     RESPAWN_TIMER_MESSAGE("&eYou are respawning in &l&f%s &r&eseconds!"),
-    RESPAWN_TIMER_SUBTITLE("&l&f%s &r&eseconds!");
+    RESPAWN_TIMER_SUBTITLE("&l&f%s &r&eseconds!"),
+    TEAM_CHAT_MESSAGE_FORMAT("%s %s: &f%s"),
+    SHOUT_CHAT_MESSAGE_FORMAT("&7[&bSHOUT&7]&r %s %s: &f%s");
 
     private final String message;
 

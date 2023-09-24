@@ -27,6 +27,7 @@ public class WarriorKit extends AbstractKit {
         warriorSword.addEnchantment(Enchantment.DURABILITY, 3);
 
         inventoryItems.put(0, warriorSword.build());
+        inventoryItems.put(1, PluginItems.FLAG_COMPASS.setNBTTag("flagSelected", "none"));
 
         return inventoryItems;
     }

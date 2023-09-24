@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class PowerUp {
 
@@ -20,9 +22,8 @@ public abstract class PowerUp {
     private final String displayName;
     private Location location;
     private boolean isSpawned;
-
-    private NMSItem nmsItem;
-    private Collection<NMSArmorStand> nmsArmorStands = new ArrayList<>();
+    private final Collection<NMSArmorStand> nmsArmorStands = new ArrayList<>();
+    private final Collection<NMSItem> nmsItems = new ArrayList<>();
     private PowerUpCoolDownTask powerUpCoolDownTask;
 
     public PowerUp(ItemStack displayItem, String displayName, Location location) {
@@ -52,11 +53,17 @@ public abstract class PowerUp {
 
     public void removePowerUp() {
         this.isSpawned = false;
-        nmsItem.sendDestroyItemPacketToPlayer();
         for (NMSArmorStand nmsArmorStand : nmsArmorStands) {
             nmsArmorStand.sendDestroyArmorStandPacketToPlayer();
         }
+
+        for (NMSItem nmsItem : nmsItems) {
+            nmsItem.sendDestroyItemPacketToPlayer();
+        }
+
         nmsArmorStands.clear();
+        nmsItems.clear();
+
         powerUpCoolDownTask = new PowerUpCoolDownTask();
         powerUpCoolDownTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20);
     }
@@ -93,18 +100,20 @@ public abstract class PowerUp {
     }
 
     private void placePowerUp(Player player) {
-        nmsItem = new NMSItem(displayItem);
-        nmsItem.sendSpawnItemPacketToPlayer(player, location);
+
+        NMSItem nmsItem = new NMSItem(displayItem, player);
+        nmsItem.sendSpawnItemPacketToPlayer(location);
+        nmsItems.add(nmsItem);
 
         NMSArmorStand nmsItemArmorStand = new NMSArmorStand(null);
         nmsItemArmorStand.sendSpawnArmorStandPacketToPlayer(player, location, true);
         nmsArmorStands.add(nmsItemArmorStand);
 
         NMSArmorStand nmsItemHologram = new NMSArmorStand(displayName);
-        nmsItemHologram.sendSpawnArmorStandPacketToPlayer(player, location, true);
+        nmsItemHologram.sendSpawnArmorStandPacketToPlayer(player, new Location(location.getWorld(), location.getX(), location.getY()+1, location.getZ()), true);
         nmsArmorStands.add(nmsItemHologram);
 
-        int[] entityIds = new int[]{nmsItem.getEntityId(), nmsItemHologram.getEntityId()};
+        int[] entityIds = new int[]{nmsItem.getEntityId()};
         nmsItemArmorStand.sendMountPacket(player, entityIds);
     }
 

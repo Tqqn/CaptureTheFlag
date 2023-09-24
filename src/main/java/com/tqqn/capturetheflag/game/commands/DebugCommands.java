@@ -1,15 +1,11 @@
 package com.tqqn.capturetheflag.game.commands;
 
-import com.tqqn.capturetheflag.CaptureTheFlag;
+import com.tqqn.capturetheflag.game.GameStates;
 import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.game.flag.FlagStatus;
 import com.tqqn.capturetheflag.game.GameManager;
-import com.tqqn.capturetheflag.items.PluginItems;
 import com.tqqn.capturetheflag.nms.NMSArmorStand;
-import com.tqqn.capturetheflag.nms.NMSItem;
 import com.tqqn.capturetheflag.game.tab.TabScoreboardManager;
-import com.tqqn.capturetheflag.game.gamestates.lobby.tasks.StartGameTask;
-import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.NMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -47,16 +43,14 @@ public class DebugCommands implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("kills")) {
             gameManager.getArena().getGamePlayer(player.getUniqueId()).addKill();
         } else if (args[0].equalsIgnoreCase("start")) {
-            player.sendMessage(GameUtils.translateColor("&cGame is starting in &f10&c seconds."));
-            StartGameTask startGameTask = new StartGameTask(gameManager);
-            startGameTask.runTaskTimer(CaptureTheFlag.getInstance(), 0, 20L);
+            gameManager.setGameState(GameStates.ACTIVE);
         } else if (args[0].equalsIgnoreCase("kill")) {
             TabScoreboardManager.setPlayerSpectatorTab(gameManager.getArena().getGamePlayer(player.getUniqueId()));
         } else if (args[0].equalsIgnoreCase("spawnflag")) {
             Arena.getGamePlayer(player.getUniqueId()).getTeam().spawnTeamFlagOnSpawn();
         } else if (args[0].equalsIgnoreCase("item")) {
-            NMSItem nmsItem = new NMSItem(PluginItems.POWERUP_JUMP_ITEM.getItemStack());
-            nmsItem.sendSpawnItemPacketToPlayer(player, player.getLocation());
+            //NMSItem nmsItem = new NMSItem(PluginItems.POWERUP_JUMP_ITEM.getItemStack());
+            //nmsItem.sendSpawnItemPacketToPlayer(player, player.getLocation());
 
             NMSArmorStand nmsItemArmorStand = new NMSArmorStand(null);
             nmsItemArmorStand.sendSpawnArmorStandPacketToPlayer(player, player.getLocation(), true);
@@ -64,8 +58,8 @@ public class DebugCommands implements CommandExecutor {
             NMSArmorStand nmsItemHologram = new NMSArmorStand(NMessages.POWERUP_SPEED.getMessage());
             nmsItemHologram.sendSpawnArmorStandPacketToPlayer(player, player.getLocation(), true);
 
-            int[] entityIds = new int[]{nmsItem.getEntityId(), nmsItemHologram.getEntityId()};
-            nmsItemArmorStand.sendMountPacket(player, entityIds);
+            //int[] entityIds = new int[]{nmsItem.getEntityId(player), nmsItemHologram.getEntityId(player)};
+            //nmsItemArmorStand.sendMountPacket(player, entityIds);
         }
         return true;
     }

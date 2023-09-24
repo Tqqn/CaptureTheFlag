@@ -23,21 +23,25 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setDisplayName(String name) {
-        this.itemMeta.setDisplayName(GameUtils.translateColor(name));
+        itemMeta.setDisplayName(GameUtils.translateColor(name));
         return this;
     }
     public ItemBuilder setLore(String... lines) {
-        this.itemMeta.setLore(Arrays.asList(GameUtils.translateColor(lines)));
+        itemMeta.setLore(Arrays.asList(GameUtils.translateColor(lines)));
         return this;
     }
 
     public void addEnchantment(Enchantment enchantment, int level) {
-        this.itemMeta.addEnchant(enchantment, level, true);
+        itemMeta.addEnchant(enchantment, level, true);
     }
 
     public void setGlow() {
-        this.itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
-        this.itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+    }
+
+    public void setUnbreakable() {
+        itemMeta.setUnbreakable(true);
     }
 
     public ItemStack build() {

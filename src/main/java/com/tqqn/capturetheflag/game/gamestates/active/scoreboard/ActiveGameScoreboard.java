@@ -55,13 +55,13 @@ public class ActiveGameScoreboard extends BukkitRunnable implements PluginScoreb
     }
     @Override
     public void createNewScoreboard(Player player) {
-        GamePlayer gamePlayer = gameManager.getArena().getGamePlayer(player.getUniqueId());
+        GamePlayer gamePlayer = Arena.getGamePlayer(player.getUniqueId());
 
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("activeBoard", "dummy");
 
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(NMessages.ACTIVE_SCOREBOARD_TITLE.getMessage());
+        objective.setDisplayName(NMessages.GAME_SCOREBOARD_TITLE.getMessage());
 
         Team teamBluePoints = scoreboard.registerNewTeam(teamBluePointsTeam);
 

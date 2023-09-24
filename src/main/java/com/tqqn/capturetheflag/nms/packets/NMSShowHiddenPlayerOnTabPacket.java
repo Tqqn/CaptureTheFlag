@@ -22,7 +22,7 @@ public class NMSShowHiddenPlayerOnTabPacket {
         try {
             Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor();
             Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }

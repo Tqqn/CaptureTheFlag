@@ -21,12 +21,14 @@ public class BuilderKit extends AbstractKit {
     @Override
     public Map<Integer, ItemStack> getInventoryItems() {
         Map<Integer, ItemStack> inventoryItems = new HashMap<>();
-        ItemBuilder warriorSword = new ItemBuilder(Material.IRON_SWORD, 1);
-        warriorSword.setDisplayName("&cBuilder Sword");
-        warriorSword.setLore("&7Sword of a Builder.");
-        warriorSword.addEnchantment(Enchantment.DURABILITY, 3);
+        ItemBuilder builderSword = new ItemBuilder(Material.IRON_SWORD, 1);
+        builderSword.setDisplayName("&cBuilder Sword");
+        builderSword.setLore("&7Sword of a Builder.");
+        builderSword.setGlow();
+        builderSword.setUnbreakable();
 
-        inventoryItems.put(0, warriorSword.build());
+        inventoryItems.put(0, builderSword.build());
+        inventoryItems.put(1, PluginItems.FLAG_COMPASS.setNBTTag("flagSelected", "none"));
 
         return inventoryItems;
     }
@@ -40,23 +42,22 @@ public class BuilderKit extends AbstractKit {
         ItemBuilder builderChestplate = new ItemBuilder(Material.IRON_CHESTPLATE, 1);
         builderChestplate.setDisplayName("&cBuilder Chestplate");
         builderChestplate.setLore("&7Chestplate of a Builder.");
-        builderChestplate.addEnchantment(Enchantment.DURABILITY, 3);
         builderChestplate.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
+        builderChestplate.setUnbreakable();
 
         // Leggings
         ItemBuilder builderLeggings = new ItemBuilder(Material.IRON_LEGGINGS, 1);
         builderLeggings.setDisplayName("&cBuilder Leggings");
         builderLeggings.setLore("&7Leggings of a Builder.");
-        builderLeggings.addEnchantment(Enchantment.DURABILITY, 3);
         builderLeggings.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
+        builderLeggings.setUnbreakable();
 
         // Boots
         ItemBuilder builderBoots = new ItemBuilder(Material.IRON_BOOTS, 1);
         builderBoots.setDisplayName("&cBuilder Boots");
         builderBoots.setLore("&7Boots of a Builder.");
-        builderBoots.addEnchantment(Enchantment.DURABILITY, 3);
         builderBoots.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-
+        builderBoots.setUnbreakable();
         // Armor Contents, starting with boots till helmet
         itemStacks.add(builderBoots.build());
         itemStacks.add(builderLeggings.build());

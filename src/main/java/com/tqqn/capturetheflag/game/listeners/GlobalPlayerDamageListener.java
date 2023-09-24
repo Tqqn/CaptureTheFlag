@@ -1,4 +1,4 @@
-package com.tqqn.capturetheflag.game.listeners.global;
+package com.tqqn.capturetheflag.game.listeners;
 
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.GameStates;

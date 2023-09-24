@@ -23,9 +23,7 @@ public class GamePlayer {
     private boolean isSpectator = false;
     private GameTeam gameTeam = null;
     private final Set<GamePlayer> assistPlayers = new HashSet<>();
-
     AbstractKit abstractKit = null;
-
     private boolean hasFlag = false;
     private Flag flag;
 
@@ -37,7 +35,7 @@ public class GamePlayer {
     }
 
     public void spawn(Location location) {
-        if (isSpectator = true) {
+        if (isSpectator) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.showPlayer(this.player);
             }
@@ -99,6 +97,11 @@ public class GamePlayer {
     public void giveKit() {
         if (abstractKit == null) this.abstractKit = new WarriorKit();
         abstractKit.giveKit(player);
+    }
+
+    public AbstractKit getKit() {
+        if (abstractKit == null) this.abstractKit = new WarriorKit();
+        return abstractKit;
     }
 
     public void setAbstractKit(AbstractKit abstractKit) {
