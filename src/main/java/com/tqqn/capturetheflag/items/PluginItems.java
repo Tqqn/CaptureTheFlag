@@ -26,6 +26,7 @@ public enum PluginItems {
     POWERUP_SPEED_ITEM("&cSpeed-PowerUp", Material.FEATHER, null, true, 1),
     POWERUP_JUMP_ITEM("&cJump-PowerUp", Material.RABBIT_FOOT, null, true, 1),
     POWERUP_STRENGHT_ITEM("&cStrenght-PowerUp", Material.DIAMOND_SWORD, null, true, 1),
+    POWERUP_REGEN_ITEM("&cRegen-PowerUp", Material.GOLDEN_APPLE, null, true, 1),
 
     //Team Flags
     RED_FLAG("&cRed Flag", Material.RED_BANNER, null, false, 1),

@@ -18,6 +18,7 @@ public enum NMessages {
     POWERUP_SPEED("&b&lSpeed PowerUp"),
     POWERUP_STRENGHT("&c&lStrenght PowerUp"),
     POWERUP_JUMP("&a&lJump PowerUp"),
+    POWERUP_REGEN("&d&lRegen PowerUp"),
 
     SETUPWIZARD_BOOT("&c!!!!! SetUp Mode actived!!!!!!"),
 

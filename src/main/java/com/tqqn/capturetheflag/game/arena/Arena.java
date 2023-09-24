@@ -9,6 +9,7 @@ import com.tqqn.capturetheflag.game.GameStates;
 import com.tqqn.capturetheflag.game.powerups.PowerUp;
 import com.tqqn.capturetheflag.game.powerups.tasks.ActivePowerUpTask;
 import com.tqqn.capturetheflag.game.powerups.types.JumpPowerUp;
+import com.tqqn.capturetheflag.game.powerups.types.RegenPowerUp;
 import com.tqqn.capturetheflag.game.powerups.types.SpeedPowerUp;
 import com.tqqn.capturetheflag.game.powerups.types.StrenghtPowerUp;
 import com.tqqn.capturetheflag.game.teams.GameTeam;
@@ -45,6 +46,7 @@ public class Arena {
         powerUps.add(new JumpPowerUp(null));
         powerUps.add(new SpeedPowerUp(null));
         powerUps.add(new StrenghtPowerUp(null));
+        powerUps.add(new RegenPowerUp(null));
     }
 
     public void teleportPlayerToSpawn(Player player) {

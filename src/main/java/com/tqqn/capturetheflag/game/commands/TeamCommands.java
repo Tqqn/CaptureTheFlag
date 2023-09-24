@@ -2,6 +2,7 @@ package com.tqqn.capturetheflag.game.commands;
 
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.arena.Arena;
+import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,22 +29,27 @@ public class TeamCommands implements CommandExecutor {
         }
         switch (args[0].toUpperCase()) {
             case "RED":
-                if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamRed()) {
-                    player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
-                    return false;
+                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamRed()) {
+                    if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamRed()) {
+                        player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
+                        return false;
+                    }
+                    Arena.getGamePlayer(player.getUniqueId()).setTeam(gameManager.getTeamRed());
+                    player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
+                    return true;
                 }
-                Arena.getGamePlayer(player.getUniqueId()).setTeam(gameManager.getTeamRed());
-                player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
-                return true;
-
+                player.sendMessage(NMessages.TEAM_IS_FULL.getMessage());
             case "BLUE":
-                if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamBlue()) {
-                    player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
-                    return false;
+                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamBlue()) {
+                    if (Arena.getGamePlayer(player.getUniqueId()).getTeam() == gameManager.getTeamBlue()) {
+                        player.sendMessage(SMessages.ALREADY_IN_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
+                        return false;
+                    }
+                    Arena.getGamePlayer(player.getUniqueId()).setTeam(gameManager.getTeamBlue());
+                    player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
+                    return true;
                 }
-                Arena.getGamePlayer(player.getUniqueId()).setTeam(gameManager.getTeamBlue());
-                player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
-                return true;
+                player.sendMessage(NMessages.TEAM_IS_FULL.getMessage());
         }
         return false;
     }

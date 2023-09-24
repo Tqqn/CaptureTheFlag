@@ -6,18 +6,19 @@ MC-Version: 1.16.x and above
 
   Taking the enemy Flag and bringing it back to ur own flag will give points.
   The gameTeam with the most points wins the game.
+- PowerUps will spawning during the match. Try to pick them up to get an temporary advantage.
 
 ## Commands:
 ### Admin Commands:
-- /ctf start - Force starts the game.
-- /ctf stop - Force stops the game.
+- /debug start - Force starts the game.
+- /setup - Sets you in setup mode (this only works during setup mode).
 
 ### Player Commands:
-- /ctf join < gameTeam > - Join a gameTeam.
-- /ctf leave - Leave a gameTeam.
-
+- /kit - Opens Kit Menu
+- /shout <message> - Sends a message to all players.
+- /team <team> - Join the given team if not full.
 
 ### Disclaimer:
-This minigame is build for my own private develop server/for my own use.
+This minigame is build for my own private develop non persistent minigame-server/for my own use.
 So be warned. Code might not work for your server.
 
