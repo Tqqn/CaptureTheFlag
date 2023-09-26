@@ -11,6 +11,7 @@ MC-Version: 1.16.x and above
 ## Commands:
 ### Admin Commands:
 - /debug start - Force starts the game.
+- /debug stop - Force stop the game.
 - /setup - Sets you in setup mode (this only works during setup mode).
 
 ### Player Commands:
