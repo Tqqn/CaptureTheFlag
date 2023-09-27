@@ -7,7 +7,7 @@ import com.tqqn.capturetheflag.game.AbstractGameState;
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.GameStates;
 import com.tqqn.capturetheflag.game.gamestates.lobby.tasks.LobbyWaitingGameTask;
-import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.utils.PluginItems;
 import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.SMessages;
@@ -60,12 +60,12 @@ public class LobbyGameState extends AbstractGameState {
                     return;
                 }
 
-                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamRed()) {
+                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamRed() || gameManager.whichTeamIsSmaller() == null) {
                     if (gamePlayer.getTeam() != null) {
                         gamePlayer.getTeam().removePlayerFromTeam(gamePlayer);
                     }
 
-                    gameManager.getTeamRed().addPlayerToTeam(gamePlayer, gameManager.getTeamRed());
+                    gameManager.getTeamRed().addPlayerToTeam(gamePlayer);
                     player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamRed().getDisplayName()));
                     return;
                 }
@@ -76,11 +76,11 @@ public class LobbyGameState extends AbstractGameState {
                     return;
                 }
 
-                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamBlue()) {
+                if (gameManager.whichTeamIsSmaller() == gameManager.getTeamBlue() || gameManager.whichTeamIsSmaller() == null) {
                     if (gamePlayer.getTeam() != null) {
                         gamePlayer.getTeam().removePlayerFromTeam(gamePlayer);
                     }
-                    gameManager.getTeamBlue().addPlayerToTeam(gamePlayer, gameManager.getTeamBlue());
+                    gameManager.getTeamBlue().addPlayerToTeam(gamePlayer);
                     player.sendMessage(SMessages.CHOOSE_TEAM.getMessage(gameManager.getTeamBlue().getDisplayName()));
                     return;
                 }

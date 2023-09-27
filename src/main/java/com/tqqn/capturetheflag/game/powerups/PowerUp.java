@@ -5,6 +5,7 @@ import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.nms.NMSArmorStand;
 import com.tqqn.capturetheflag.nms.NMSItem;
 import com.tqqn.capturetheflag.game.powerups.tasks.PowerUpCoolDownTask;
+import com.tqqn.capturetheflag.utils.PluginSounds;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -94,6 +95,7 @@ public abstract class PowerUp {
                 if (Arena.getGamePlayer(nearestPlayer.getUniqueId()).isSpectator()) return;
 
                 givePowerUp(nearestPlayer);
+                PluginSounds.POWERUP_PICKUP.playSound(nearestPlayer);
                 removePowerUp();
             }
         }

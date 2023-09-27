@@ -19,7 +19,8 @@ public enum PluginSounds {
     ENEMY_FLAG_CAPTURED(Sound.ENTITY_WITHER_DEATH, 0.5, 3),
     START_GAME(Sound.ENTITY_ENDER_DRAGON_GROWL, 0.5, 1.5),
     WIN_GAME(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 0.5, 3),
-    LOSE_GAME(Sound.ENTITY_PILLAGER_CELEBRATE, 0.5, 1.5);
+    LOSE_GAME(Sound.ENTITY_PILLAGER_CELEBRATE, 0.5, 1.5),
+    POWERUP_PICKUP(Sound.ENTITY_WANDERING_TRADER_DRINK_POTION, 0.5, 1);
 
     private final Sound sound;
     private final double volume;

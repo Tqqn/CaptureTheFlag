@@ -20,12 +20,15 @@ import com.tqqn.capturetheflag.utils.PluginSounds;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -100,7 +103,17 @@ public class ActiveGameState extends AbstractGameState {
         if (player.getKiller() == null || player.getKiller() == player) {
             GameUtils.broadcastMessage(SMessages.PLAYER_DEATH.getMessage(gamePlayer.getTeam().getTeamColor().getColor() + player.getName()));
         } else {
-            GamePlayer killer = Arena.getGamePlayer(player.getKiller().getUniqueId());
+            GamePlayer killer;
+            if (player.getKiller() instanceof Arrow) {
+                Arrow arrow = (Arrow) player.getKiller();
+                if (!(arrow.getShooter() instanceof Player)) return;
+
+                Player shooter = (Player) arrow.getShooter();
+                killer = Arena.getGamePlayer(shooter.getUniqueId());
+            } else {
+                killer = Arena.getGamePlayer(player.getKiller().getUniqueId());
+            }
+
             GameUtils.broadcastMessage(SMessages.PLAYER_DEATH_BY_PLAYER.getMessage(gamePlayer.getTeam().getTeamColor().getColor() + player.getName(), killer.getTeam().getTeamColor().getColor() + killer.getPlayer().getName()));
             killer.addKill();
             killer.getTeam().addPoints(GamePoints.PLAYER_KILL.getPoints());
@@ -159,28 +172,21 @@ public class ActiveGameState extends AbstractGameState {
                 if (event.getItem().getType() == Material.COMPASS) {
                     String targetName = "";
                     ItemStack compass = event.getItem();
-                    System.out.println("1 " + NMSUtils.getNBTTag(compass, "flagSelected"));
 
                     switch (NMSUtils.getNBTTag(compass, "flagSelected").replace("\"", "")) {
                         case "red":
-                            compass.setItemMeta(NMSUtils.applyNMSTag(compass, "flagSelected", "blue").getItemMeta());
+                        case "none":
+                            compass.setItemMeta(NMSUtils.applyNBTTag(compass, "flagSelected", "blue").getItemMeta());
                             targetName = GameUtils.translateColor("&bTargeting: &9Blue Flag");
-                            System.out.println("2 " + NMSUtils.getNBTTag(compass, "flagSelected"));
                             break;
                         case "blue":
-                            compass.setItemMeta(NMSUtils.applyNMSTag(compass, "flagSelected", "red").getItemMeta());
+                            compass.setItemMeta(NMSUtils.applyNBTTag(compass, "flagSelected", "red").getItemMeta());
                             targetName = GameUtils.translateColor("&bTargeting: &cRed Flag");
-                            System.out.println("3 " + NMSUtils.getNBTTag(compass, "flagSelected"));
                             break;
-                        case "none":
-                            compass.setItemMeta(NMSUtils.applyNMSTag(compass, "flagSelected", "blue").getItemMeta());
-                            targetName = GameUtils.translateColor("&bTargeting: &9Blue Flag");
-                            System.out.println("4 " + NMSUtils.getNBTTag(compass, "flagSelected"));
                     }
                     ItemMeta itemMeta = compass.getItemMeta();
                     itemMeta.setDisplayName(targetName);
                     compass.setItemMeta(itemMeta);
-                    System.out.println("5 " + NMSUtils.getNBTTag(compass, "flagSelected"));
                 }
             }
         }
@@ -218,6 +224,13 @@ public class ActiveGameState extends AbstractGameState {
         if (!(event.getEntity() instanceof Player)) return;
         Player player = (Player) event.getEntity();
         if (Arena.getGamePlayer(player.getUniqueId()).isSpectator()) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onArrowHit(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof Arrow)) return;
+        Arrow arrow = (Arrow) event.getEntity();
+        arrow.remove();
     }
 
     @EventHandler

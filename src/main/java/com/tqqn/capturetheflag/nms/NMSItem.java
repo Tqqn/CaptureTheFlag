@@ -29,11 +29,20 @@ public class NMSItem {
     Class<?> NMSWorldClass = NMSUtils.getNMSClass("World");
     Object entityItem;
 
+    /**
+     * Creates a NMSItem Object
+     * @param itemStack ItemStack
+     * @param player Player
+     */
     public NMSItem(ItemStack itemStack, Player player) {
         this.itemStack = itemStack;
         this.player = player;
     }
 
+    /**
+     * Sends a EntityItem packet to the player.
+     * @param location Location
+     */
     public void sendSpawnItemPacketToPlayer(Location location) {
         try {
             if (entityId != 0) {
@@ -69,6 +78,9 @@ public class NMSItem {
         }
     }
 
+    /**
+     * Sends a Destroy EntityItem packet to the player.
+     */
     public void sendDestroyItemPacketToPlayer() {
         try {
             Constructor<?> packetPlayOutEntityDestroyConstructor = packetPlayOutEntityDestroyClass.getConstructor(int[].class);
@@ -80,10 +92,16 @@ public class NMSItem {
         }
     }
 
+    /**
+     * Returns the entityItem.
+     */
     public Object getEntity() {
         return entityItem;
     }
 
+    /**
+     * Returns the EntityId.
+     */
     public int getEntityId() {
         return entityId;
     }

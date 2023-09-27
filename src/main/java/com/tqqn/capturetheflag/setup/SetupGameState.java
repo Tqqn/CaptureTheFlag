@@ -1,7 +1,7 @@
 package com.tqqn.capturetheflag.setup;
 
 import com.tqqn.capturetheflag.game.AbstractGameState;
-import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.utils.PluginItems;
 import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.PluginConfig;
 import com.tqqn.capturetheflag.utils.SMessages;

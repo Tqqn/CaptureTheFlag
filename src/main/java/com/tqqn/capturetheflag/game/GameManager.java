@@ -13,7 +13,7 @@ import com.tqqn.capturetheflag.game.gamestates.end.EndGameState;
 import com.tqqn.capturetheflag.game.gamestates.lobby.LobbyGameState;
 import com.tqqn.capturetheflag.game.kits.menu.KitSelectorMenu;
 import com.tqqn.capturetheflag.game.listeners.*;
-import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.utils.PluginItems;
 import com.tqqn.capturetheflag.game.tab.TabScoreboardManager;
 import com.tqqn.capturetheflag.game.gamestates.active.tasks.ActiveGameTask;
 import com.tqqn.capturetheflag.game.teams.GameTeam;
@@ -53,13 +53,16 @@ public class GameManager {
         this.plugin = plugin;
     }
 
+    /**
+     * Void Method that will init all the game mechanics.
+     */
     public void init() {
         this.gameTeamRed = new GameTeam("&cRed", TeamColor.RED, TeamTabPrefix.RED_TAB_PREFIX, TeamChatPrefix.RED_CHAT_PREFIX, 1,  plugin.getPluginConfig().getTeamSpawnLocation("red"), new Flag("&cRed Flag", plugin.getPluginConfig().getTeamFlagSpawnLocation("red"), PluginItems.RED_FLAG.getItemStack().getType(), new Particle.DustOptions(Color.fromRGB(235, 55, 52), 1)), this);
         this.gameTeamBlue = new GameTeam("&9Blue", TeamColor.BLUE, TeamTabPrefix.BLUE_TAB_PREFIX, TeamChatPrefix.BLUE_CHAT_PREFIX, 2,  plugin.getPluginConfig().getTeamSpawnLocation("blue"), new Flag("&9Blue Flag", plugin.getPluginConfig().getTeamFlagSpawnLocation("blue"), PluginItems.BLUE_FLAG.getItemStack().getType(), new Particle.DustOptions(Color.fromRGB(52, 61, 235), 1)), this);
         gameTeamRed.getTeamFlag().setGameTeam(gameTeamRed);
         gameTeamBlue.getTeamFlag().setGameTeam(gameTeamBlue);
 
-        this.arena = new Arena(plugin.getPluginConfig().getLobbySpawnLocation(), gameTeamRed, gameTeamBlue, plugin.getPluginConfig().getMinPlayers(), plugin.getPluginConfig().getMaxPlayers(), plugin.getPluginConfig().getGameStartCountdown());
+        this.arena = new Arena(plugin.getPluginConfig().getLobbySpawnLocation(), gameTeamRed, gameTeamBlue, plugin.getPluginConfig().getMinPlayers(), plugin.getPluginConfig().getMaxPlayers());
         initLobbyItems();
         this.kitSelectorMenu = new KitSelectorMenu();
 
@@ -71,10 +74,17 @@ public class GameManager {
         enabledGameStates.add(lobbyGameState);
     }
 
+    /**
+     * Void Method that will shutdown the server.
+     */
     public void disableGame() {
         Bukkit.getServer().shutdown();
     }
 
+    /**
+     * Void Method that updates the GameState.
+     * @param gameState GameState
+     */
     public void setGameState(GameStates gameState) {
         //Checks if the new gameState is the same as the old gameState.
         if (GameManager.gameState == gameState) return;
@@ -100,26 +110,44 @@ public class GameManager {
         }
     }
 
+    /**
+     * Static Method that returns the current GameState.
+     */
     public static GameStates getGameStates() {
         return gameState;
     }
 
+    /**
+     * Returns the Arena Object.
+     */
     public Arena getArena() {
         return this.arena;
     }
 
+    /**
+     * Returns the KitSelectorMenu Object.
+     */
     public KitSelectorMenu getKitSelectorMenu() {
         return kitSelectorMenu;
     }
 
+    /**
+     * Returns the Red GameTeam.
+     */
     public GameTeam getTeamRed() {
         return gameTeamRed;
     }
 
+    /**
+     * Returns the Blue GameTeam.
+     */
     public GameTeam getTeamBlue() {
         return gameTeamBlue;
     }
 
+    /**
+     * Returns the ActiveGameTask time.
+     */
     public long getActiveGameTaskTime() {
         if (GameManager.gameState == GameStates.ACTIVE) {
             return ActiveGameTask.getTime();
@@ -127,6 +155,9 @@ public class GameManager {
         return 0;
     }
 
+    /**
+     * Void Method that will register events.
+     */
     private void registerEvents() {
         PluginManager pluginManager = Bukkit.getPluginManager();
 
@@ -143,6 +174,9 @@ public class GameManager {
         pluginManager.registerEvents(new GlobalFoodLevelChangeListener(), plugin);
     }
 
+    /**
+     * Void Method that will register commands.
+     */
     private void registerCommands() {
             plugin.getCommand("team").setExecutor(new TeamCommands(this));
             plugin.getCommand("debug").setExecutor(new DebugCommands(this));
@@ -150,12 +184,19 @@ public class GameManager {
             plugin.getCommand("shout").setExecutor(new ShoutCommands());
     }
 
+    /**
+     * Void Method that will init/create a Map with the lobbyItems.
+     */
     public void initLobbyItems() {
         lobbyItems = new HashMap<>();
         lobbyItems.put(3, PluginItems.CHOOSE_RED_TEAM.getItemStack());
         lobbyItems.put(5, PluginItems.CHOOSE_BLUE_TEAM.getItemStack());
     }
 
+    /**
+     * Void Method that will give the player the lobby items.
+     * @param player Player
+     */
     public void giveLobbyItems(Player player) {
         clearPlayerInventory(player);
 
@@ -164,14 +205,18 @@ public class GameManager {
         }
     }
 
+    /**
+     * Void Method that will clear the inventory of the player.
+     * @param player Player
+     */
     public void clearPlayerInventory(Player player) {
         player.getInventory().clear();
     }
 
-    public TabScoreboardManager getTabScoreboardManager() {
-        return tabScoreboardManager;
-    }
-
+    /**
+     * Static void method that will spawn a flag.
+     * @param flag Flag
+     */
     public static void addSpawnedFlag(Flag flag) {
         spawnedFlags.put(flag.getCurrentLocation(), flag);
 
@@ -179,10 +224,18 @@ public class GameManager {
         spawnedFlags.put(flagLocation, flag);
     }
 
+    /**
+     * Static Method that returns the flag that is on the given location.
+     * @param location Location
+     */
     public static Flag getFlag(Location location) {
         return spawnedFlags.get(location);
     }
 
+    /**
+     * Static Method that will remove the spawned Flag.
+     * @param flag Flag
+     */
     public static void removeSpawnedFlag(Flag flag) {
         spawnedFlags.remove(flag.getCurrentLocation());
         Location flagLocation = new Location(flag.getCurrentLocation().getWorld(), flag.getCurrentLocation().getX(), flag.getCurrentLocation().getY()+1, flag.getCurrentLocation().getZ());
@@ -190,6 +243,10 @@ public class GameManager {
         flag.setCurrentLocation(null);
     }
 
+    /**
+     * Static Method that returns if the location is a spawned Flag.
+     * @param location Location
+     */
     public static boolean isLocationSpawnedFlag(Location location) {
         Location flagLocation = new Location(location.getWorld(), location.getX(), location.getY()+1, location.getZ());
         flagLocation.setY(flagLocation.getY() + 1);
@@ -197,21 +254,33 @@ public class GameManager {
         return spawnedFlags.containsKey(location) || spawnedFlags.containsKey(flagLocation);
     }
 
+    /**
+     * Method that returns which team is smaller in players. If both are the same, return null.
+     */
     public GameTeam whichTeamIsSmaller() {
-        if (gameTeamBlue.getTeamPlayers().size() < gameTeamRed.getTeamPlayers().size()) {
-            return gameTeamBlue;
-        } else {
-            return gameTeamRed;
-        }
+        if (gameTeamBlue.getTeamPlayers().size() < gameTeamRed.getTeamPlayers().size()) return gameTeamBlue;
+        if (gameTeamBlue.getTeamPlayers().size() > gameTeamRed.getTeamPlayers().size()) return gameTeamRed;
+        return null;
     }
 
+    /**
+     * Void Method that will get all the no team players and balance these players on the overall teams.
+     */
     public void balanceTeamPlayers() {
         for (GamePlayer gamePlayer : arena.getNoTeamPlayers()) {
             GameTeam gameTeam = whichTeamIsSmaller();
-            gameTeam.addPlayerToTeam(gamePlayer, gameTeam);
+            if (gameTeam == null) {
+                getTeamRed().addPlayerToTeam(gamePlayer);
+            } else {
+                gameTeam.addPlayerToTeam(gamePlayer);
+            }
         }
     }
 
+    /**
+     * Returns the enemy team of the given team.
+     * @param player Player
+     */
     public GameTeam getEnemyTeam(GamePlayer player) {
 
         if (player.getTeam() == getTeamRed()) return getTeamBlue();

@@ -13,6 +13,11 @@ public class NMSUtils {
 
     public static String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
+    /**
+     * Static Method that will return the NMS Class of the given name.
+     * Throws ClassNotFoundException if not found.
+     * @param name String
+     */
     public static Class<?> getNMSClass(String name) {
         try {
             return Class.forName("net.minecraft.server." + version + "." + name);
@@ -22,6 +27,11 @@ public class NMSUtils {
         }
     }
 
+    /**
+     * Static Method that will return the CraftBukkit Class of the given name.
+     * Throws ClassNotFoundException if not found.
+     * @param name String
+     */
     public static Class<?> getCraftBukkitClass(String name) {
         try {
             return Class.forName("org.bukkit.craftbukkit." + version + "." + name);
@@ -31,51 +41,68 @@ public class NMSUtils {
         }
     }
 
+    /**
+     * Static Method that will send a packet to the given player.
+     * Throws Exception if something goes wrong.
+     * @param player Player
+     * @param packet Object
+     */
     public static void sendPacket(Player player, Object packet) {
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
             Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
             playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
-        } catch (Exception var4) {
-            var4.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Static Method that will set the fields value of the Object
+     * @param packet Object
+     * @param field Field
+     * @param value Object
+     */
     public static void setField(Object packet, Field field, Object value) {
         field.setAccessible(true);
         try {
             field.set(packet, value);
-        } catch (IllegalAccessException | IllegalArgumentException var4) {
-            var4.printStackTrace();
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            e.printStackTrace();
         }
         field.setAccessible(!field.isAccessible());
     }
 
+    /**
+     * Static Method that will return the field from the given class with the given fieldName.
+     * @param clazz Class
+     * @param fieldName String
+     */
     public static Field getField(Class<?> clazz, String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName);
-        } catch (SecurityException | NoSuchFieldException var3) {
-            var3.printStackTrace();
+        } catch (SecurityException | NoSuchFieldException e) {
+            e.printStackTrace();
             return null;
         }
     }
 
-    public static ItemStack applyNMSTag(ItemStack itemStack, String tagName, String tagValue) {
+    /**
+     * Static Method that will apply an NMS-Tag to the given item with the given tagName and tagValue.
+     * @param itemStack ItemStack
+     * @param tagName String
+     * @param tagValue String
+     */
+    public static ItemStack applyNBTTag(ItemStack itemStack, String tagName, String tagValue) {
         try {
             Method asNMSCopy = getCraftBukkitClass("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class);
             Object nmsItemStack = asNMSCopy.invoke(null, itemStack);
 
-            System.out.println(nmsItemStack.toString());
-
             Method getOrCreateTag = nmsItemStack.getClass().getDeclaredMethod("getOrCreateTag");
             Object nbtTagCompound = getOrCreateTag.invoke(nmsItemStack);
 
-            System.out.println(nbtTagCompound.toString());
-
             Method setString = nbtTagCompound.getClass().getMethod("setString", String.class, String.class);
             setString.invoke(nbtTagCompound, tagName, tagValue);
-
-            System.out.println(nbtTagCompound);
 
             Method setTag = nmsItemStack.getClass().getMethod("setTag", getNMSClass("NBTTagCompound"));
             setTag.invoke(nmsItemStack, nbtTagCompound);
@@ -89,6 +116,11 @@ public class NMSUtils {
         }
     }
 
+    /**
+     * Static Method that will return the NBTTag of the given ItemStack with the given key.
+     * @param itemStack ItemStack
+     * @param key String
+     */
     public static String getNBTTag(ItemStack itemStack, String key) {
         try {
             Method asNMSCopy = getCraftBukkitClass("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class);
@@ -111,6 +143,15 @@ public class NMSUtils {
         }
     }
 
+    /**
+     * Static Void Method that will send a title message packet to the player.
+     * @param player Player
+     * @param message String
+     * @param subMessage String
+     * @param fadeIn int
+     * @param duration int
+     * @param fadeOut int
+     */
     public static void sendTitleMessage(Player player, String message, String subMessage, int fadeIn, int duration, int fadeOut) {
         String titleMessage = "{\"text\":\""  + message + "\"}";
         String titleSubMessage = "{\"text\":\"" + subMessage + "\"}";

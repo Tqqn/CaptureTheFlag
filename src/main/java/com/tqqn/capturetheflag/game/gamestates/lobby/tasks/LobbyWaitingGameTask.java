@@ -31,8 +31,10 @@ public class LobbyWaitingGameTask extends BukkitRunnable {
 
         if (gameManager.getArena().canStart()) {
             if (!canStart) {
-                time = 30;
+                time = 10;
                 canStart = true;
+                GameUtils.broadcastMessage(SMessages.GAME_START_COUNTDOWN.getMessage(String.valueOf(time)));
+                PluginSounds.COUNTDOWN_SOUND.playSoundForAll();
             }
             if (time <= 5) {
                 GameUtils.broadcastMessage(SMessages.GAME_START_COUNTDOWN.getMessage(String.valueOf(time)));

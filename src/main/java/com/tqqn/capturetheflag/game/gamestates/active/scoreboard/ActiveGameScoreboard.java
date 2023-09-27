@@ -112,6 +112,7 @@ public class ActiveGameScoreboard extends BukkitRunnable implements PluginScoreb
         player.setScoreboard(scoreboard);
     }
 
+    @Override
     public void updateScoreboard(Player player) {
         Scoreboard scoreboard = player.getScoreboard();
         GamePlayer gamePlayer = Arena.getGamePlayer(player.getUniqueId());

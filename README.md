@@ -26,7 +26,7 @@ MC-Version: 1.16.x and above
 - Custom Scoreboard (That displays the time, points, kills, assists, etc.)
 
 ### Disclaimer:
-This minigame is build for my own private develop non persistent minigame-server/for my own use.
+This minigame is build for CelestialMC. 
 So be warned. Code might not work for your server.
 
 

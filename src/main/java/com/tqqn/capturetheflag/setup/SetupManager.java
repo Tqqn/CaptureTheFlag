@@ -1,7 +1,7 @@
 package com.tqqn.capturetheflag.setup;
 
 import com.tqqn.capturetheflag.CaptureTheFlag;
-import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.utils.PluginItems;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,6 +14,10 @@ public class SetupManager {
 
     private final List<Player> hasSetupItems = new ArrayList<>();
 
+    /**
+     * Creates a SetupManager Object
+     * @param plugin CaptureTheFlag
+     */
     public SetupManager(CaptureTheFlag plugin) {
         this.plugin = plugin;
         initSetupItems();
@@ -21,6 +25,9 @@ public class SetupManager {
         setupGameState.init();
     }
 
+    /**
+     * Void Method that will init/setup the Setup Items.
+     */
     public void initSetupItems() {
         setupItems = new HashMap<>();
         setupItems.put(1, PluginItems.SETUPWIZARD_SET_LOBBY_LOCATION_ITEM.getItemStack());
@@ -32,6 +39,10 @@ public class SetupManager {
         setupItems.put(7, PluginItems.SETUPWIZARD_SAVE_ITEM.getItemStack());
     }
 
+    /**
+     * Void Method that will add the setup items to the players inventory.
+     * @param player Player
+     */
     public void addSetupItems(Player player) {
         clearPlayerInventory(player);
         for (Map.Entry<Integer, ItemStack> set : setupItems.entrySet()) {
@@ -40,19 +51,34 @@ public class SetupManager {
         hasSetupItems.add(player);
     }
 
+    /**
+     * Clears the Players inventory.
+     * @param player Player
+     */
     public void clearPlayerInventory(Player player) {
         player.getInventory().clear();
     }
 
+    /**
+     * Removes the players inventory.
+     * @param player Players
+     */
     public void removeSetupItems(Player player) {
         clearPlayerInventory(player);
         hasSetupItems.remove(player);
     }
 
+    /**
+     * Checks if the player has setupItems.
+     * @param player Player
+     */
     public boolean hasSetupItems(Player player) {
         return hasSetupItems.contains(player);
     }
 
+    /**
+     * Returns an instance of the main class.
+     */
     public CaptureTheFlag getPlugin() {
         return plugin;
     }

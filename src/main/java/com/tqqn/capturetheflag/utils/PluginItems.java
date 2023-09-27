@@ -1,7 +1,6 @@
-package com.tqqn.capturetheflag.items;
+package com.tqqn.capturetheflag.utils;
 
 import com.tqqn.capturetheflag.nms.NMSUtils;
-import com.tqqn.capturetheflag.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,7 +33,7 @@ public enum PluginItems {
 
     //Kit Icons
     KIT_ARCHER_ICON("Kit: &cArcher", Material.BOW, null, false, 1),
-    KIT_BUILDER_ICON("Kit: &cBuilder", Material.BRICK, null, false, 1),
+    KIT_TANK_ICON("Kit: &cTANK", Material.IRON_CHESTPLATE, null, false, 1),
     KIT_WARRIOR_ICON("Kit: &cWarrior", Material.DIAMOND_SWORD, null, false, 1),
 
     FLAG_COMPASS("&bTracking: ", Material.COMPASS, null, false, 1);
@@ -67,6 +66,6 @@ public enum PluginItems {
     }
 
     public ItemStack setNBTTag(String key, String value) {
-        return NMSUtils.applyNMSTag(getItemStack(), key, value);
+        return NMSUtils.applyNBTTag(getItemStack(), key, value);
     }
 }

@@ -12,27 +12,39 @@ public class PluginConfig {
 
     private final CaptureTheFlag plugin;
 
+    /**
+     * Creates a PluginConfig Object.
+     * @param plugin CaptureTheFlag
+     */
     public PluginConfig(CaptureTheFlag plugin) {
         this.plugin = plugin;
         plugin.saveDefaultConfig();
     }
 
+    /**
+     * Checks if the game should be in setup-mode.
+     */
     public boolean isSetupMode() {
         return plugin.getConfig().getBoolean("setup-mode");
     }
 
+    /**
+     * Returns the max-players from the config.
+     */
     public int getMaxPlayers() {
         return plugin.getConfig().getInt("max-players");
     }
 
+    /**
+     * Returns the min-players from the config.
+     */
     public int getMinPlayers() {
         return plugin.getConfig().getInt("min-players");
     }
 
-    public int getGameStartCountdown() {
-        return plugin.getConfig().getInt("game-start-countdown");
-    }
-
+    /**
+     * Returns the Lobby Location from the config.
+     */
     public Location getLobbySpawnLocation() {
         return new Location(Bukkit.getWorld(plugin.getConfig().getString("lobby.spawn.world")),
                 plugin.getConfig().getDouble("lobby.spawn.x"),
@@ -42,6 +54,10 @@ public class PluginConfig {
                 (float) plugin.getConfig().getDouble("lobby.spawn.pitch"));
     }
 
+    /**
+     * Returns the team spawn location from the config from the given team.
+     * @param team String
+     */
     public Location getTeamSpawnLocation(String team) {
             return new Location(Bukkit.getWorld(plugin.getConfig().getString("team." + team + ".spawn.world")),
                     plugin.getConfig().getDouble("team." + team + ".spawn.x"),
@@ -51,6 +67,10 @@ public class PluginConfig {
                     (float) plugin.getConfig().getDouble("team." + team + ".spawn.pitch"));
     }
 
+    /**
+     * Returns the team flag spawn location from the config from the given team.
+     * @param team String
+     */
     public Location getTeamFlagSpawnLocation(String team) {
         return new Location(Bukkit.getWorld(plugin.getConfig().getString("team." + team + ".flag.world")),
                 plugin.getConfig().getDouble("team." + team + ".flag.x"),
@@ -58,6 +78,9 @@ public class PluginConfig {
                 plugin.getConfig().getDouble("team." + team + ".flag.z"));
     }
 
+    /**
+     * Returns a List with all powerup spawn locations.
+     */
     public List<Location> getPowerUpSpawnLocations() {
         List<Location> spawnLocations = new ArrayList<>();
         for (String key : plugin.getConfig().getConfigurationSection("powerups").getKeys(false)) {
@@ -69,6 +92,10 @@ public class PluginConfig {
         return spawnLocations;
     }
 
+    /**
+     * Void Method that will update the config with a new Lobby Location.
+     * @param location Location
+     */
     public void saveLobbyLocation(Location location) {
         plugin.getConfig().set("lobby.spawn.world", location.getWorld().getName());
         plugin.getConfig().set("lobby.spawn.x", location.getX());
@@ -79,7 +106,10 @@ public class PluginConfig {
 
         plugin.saveConfig();
     }
-
+    /**
+     * Void Method that will update the config with a new Blue Spawn Location.
+     * @param location Location
+     */
     public void saveBlueSpawnLocation(Location location) {
         plugin.getConfig().set("team.blue.spawn.world", location.getWorld().getName());
         plugin.getConfig().set("team.blue.spawn.x", location.getX());
@@ -90,7 +120,10 @@ public class PluginConfig {
 
         plugin.saveConfig();
     }
-
+    /**
+     * Void Method that will update the config with a new Blue Flag Location.
+     * @param location Location
+     */
     public void saveBlueFlagLocation(Location location) {
         plugin.getConfig().set("team.blue.flag.world", location.getWorld().getName());
         plugin.getConfig().set("team.blue.flag.x", location.getBlockX());
@@ -99,7 +132,10 @@ public class PluginConfig {
 
         plugin.saveConfig();
     }
-
+    /**
+     * Void Method that will update the config with a new Red Spawn Location.
+     * @param location Location
+     */
     public void saveRedSpawnLocation(Location location) {
         plugin.getConfig().set("team.red.spawn.world", location.getWorld().getName());
         plugin.getConfig().set("team.red.spawn.x", location.getX());
@@ -110,7 +146,10 @@ public class PluginConfig {
 
         plugin.saveConfig();
     }
-
+    /**
+     * Void Method that will update the config with a new Red Flag Location.
+     * @param location Location
+     */
     public void saveRedFlagLocation(Location location) {
         plugin.getConfig().set("team.red.flag.world", location.getWorld().getName());
         plugin.getConfig().set("team.red.flag.x", location.getBlockX());
@@ -119,7 +158,10 @@ public class PluginConfig {
 
         plugin.saveConfig();
     }
-
+    /**
+     * Void Method that will update the config with a list of powerup Locations.
+     * @param powerUpLocations List
+     */
     public void savePowerUpLocations(List<Location> powerUpLocations) {
         int i = 0;
         for (Location location : powerUpLocations) {

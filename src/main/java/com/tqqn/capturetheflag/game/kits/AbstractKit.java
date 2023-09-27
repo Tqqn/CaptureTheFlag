@@ -16,6 +16,10 @@ public abstract class AbstractKit {
         this.icon = icon;
     }
 
+    /**
+     * Gives the kit to the given player.
+     * @param player Player
+     */
     public void giveKit(Player player) {
         player.getInventory().clear();
 
@@ -26,15 +30,28 @@ public abstract class AbstractKit {
 
     }
 
+    /**
+     * Returns the name.
+     */
     public String getName() {
         return ChatColor.translateAlternateColorCodes('&', name);
     }
 
+    /**
+     * Returns the ItemStack icon of the kit.
+     */
     public ItemStack getIcon() {
         return icon;
     }
 
+    /**
+     * Abstract method that will return a Map with ItemStacks.
+     */
     public abstract Map<Integer, ItemStack> getInventoryItems();
+
+    /**
+     * Abstract Method that will return an array of ItemStacks.
+     */
     public abstract ItemStack[] getArmorItems();
 
 }

@@ -4,6 +4,7 @@ import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.nms.NMSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -22,6 +23,8 @@ public class CompassLocatorTask extends BukkitRunnable {
             Location flagLocation = null;
 
             if (!player.getInventory().getItemInMainHand().hasItemMeta()) return;
+            if (player.getInventory().getItemInMainHand().getType() != Material.COMPASS) return;
+
             switch (NMSUtils.getNBTTag(player.getInventory().getItemInMainHand(), "flagSelected").replace("\"", "")) {
                 case "red":
                     flagLocation = gameManager.getTeamRed().getTeamFlag().getCurrentLocation();

@@ -5,8 +5,7 @@ public enum FlagStatus {
     RESPAWNING("&7&lRespawning!"),
     STOLEN("&c&lStolen!"),
     SAFE("&a&lSafe!"),
-    DROPPED("&6&lDropped!"),
-    NONE("&7&lNone!");
+    DROPPED("&6&lDropped!");
 
     private final String statusName;
 

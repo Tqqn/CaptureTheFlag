@@ -11,7 +11,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class NMSSendNameTagPacket {
-
+    /**
+     * Static void Method that will send a new NameTag Packet to the player.
+     * @param player Player
+     * @param color String
+     * @param prefix String
+     * @param suffix String
+     * @param players Players
+     * @param priority Integer
+     */
     public static void sendNameTagPlayers(Player player, String color, String prefix, String suffix, Player players, int priority) {
 
         String playerNameMessage = "{\"text\":\"" + player.getName() + "\"}";

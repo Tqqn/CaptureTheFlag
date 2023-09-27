@@ -1,7 +1,7 @@
 package com.tqqn.capturetheflag.game.powerups.types;
 
 import com.tqqn.capturetheflag.game.powerups.PowerUp;
-import com.tqqn.capturetheflag.items.PluginItems;
+import com.tqqn.capturetheflag.utils.PluginItems;
 import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.Location;

@@ -29,18 +29,22 @@ public class NMSArmorStand {
     Object displayNameChatSerializer;
     Object entityArmorStand;
 
+    /**
+     * Creates a NMSArmorStand Object.
+     * @param displayName String
+     */
     public NMSArmorStand(String displayName) {
         if (displayName != null) {
             this.displayName = "{\"text\":\"" + displayName + "\"}";
         }
     }
 
-    public void sendSpawnArmorStandPacketToAllPlayers(Location location) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            sendSpawnArmorStandPacketToPlayer(player, location, false);
-        }
-    }
-
+    /**
+     * Sends a spawn ArmorStand Packet to the player.
+     * @param player Player
+     * @param location Location
+     * @param shouldSmall boolean
+     */
     public void sendSpawnArmorStandPacketToPlayer(Player player, Location location, boolean shouldSmall) {
 
         try {
@@ -94,6 +98,9 @@ public class NMSArmorStand {
         }
     }
 
+    /**
+     * Sends a destroy ArmorStand packet to the players.
+     */
     public void sendDestroyArmorStandPacketToPlayer() {
         try {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -107,6 +114,11 @@ public class NMSArmorStand {
         }
     }
 
+    /**
+     * Sends a mount packet to the player.
+     * @param player Player
+     * @param entityIds int[] (entityIds that need to be mounted.
+     */
     public void sendMountPacket(Player player, int[] entityIds) {
         try {
             Constructor<?> packetPlayOutMountConstructor = packetPlayOutMountClass.getConstructor(entityClass);
@@ -117,15 +129,5 @@ public class NMSArmorStand {
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException exception) {
             exception.printStackTrace();
         }
-    }
-
-
-
-    public int getEntityId() {
-        return entityId;
-    }
-
-    public Object getSpawnedArmorStand() {
-        return entityArmorStand;
     }
 }

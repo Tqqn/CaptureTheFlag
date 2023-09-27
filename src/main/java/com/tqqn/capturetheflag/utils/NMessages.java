@@ -4,10 +4,6 @@ import org.bukkit.ChatColor;
 
 public enum NMessages {
 
-    NO_PERMISSION("&cYou have no permission to use this command."),
-    GAME_START("&cGame started!"),
-    YOU_DIED("&cYou died."),
-    YOU_WON("&6&lYou won!"),
     TAB_DEATH_SUFFIX(" &7&l☠"),
 
     FLAG_ITEM_HOLOGRAM_ENEMY("&e[RIGHT/LEFT-CLICK] &6To carry the Flag!"),
