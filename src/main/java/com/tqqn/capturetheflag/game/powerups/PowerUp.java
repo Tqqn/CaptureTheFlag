@@ -2,8 +2,8 @@ package com.tqqn.capturetheflag.game.powerups;
 
 import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.game.arena.Arena;
-import com.tqqn.capturetheflag.nms.NMSArmorStand;
-import com.tqqn.capturetheflag.nms.NMSItem;
+import com.tqqn.capturetheflag.nms.framework.AbstractNMSArmorStandEntity;
+import com.tqqn.capturetheflag.nms.framework.AbstractNMSItemEntity;
 import com.tqqn.capturetheflag.game.powerups.tasks.PowerUpCoolDownTask;
 import com.tqqn.capturetheflag.utils.PluginSounds;
 import org.bukkit.Bukkit;
@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class PowerUp {
 
@@ -23,8 +21,8 @@ public abstract class PowerUp {
     private final String displayName;
     private Location location;
     private boolean isSpawned;
-    private final Collection<NMSArmorStand> nmsArmorStands = new ArrayList<>();
-    private final Collection<NMSItem> nmsItems = new ArrayList<>();
+    private final Collection<AbstractNMSArmorStandEntity> nmsArmorStands = new ArrayList<>();
+    private final Collection<AbstractNMSItemEntity> nmsItems = new ArrayList<>();
     private PowerUpCoolDownTask powerUpCoolDownTask;
 
     public PowerUp(ItemStack displayItem, String displayName, Location location) {
@@ -54,12 +52,12 @@ public abstract class PowerUp {
 
     public void removePowerUp() {
         this.isSpawned = false;
-        for (NMSArmorStand nmsArmorStand : nmsArmorStands) {
-            nmsArmorStand.sendDestroyArmorStandPacketToPlayer();
+        for (AbstractNMSArmorStandEntity nmsArmorStand : nmsArmorStands) {
+            nmsArmorStand.removeArmorStand();
         }
 
-        for (NMSItem nmsItem : nmsItems) {
-            nmsItem.sendDestroyItemPacketToPlayer();
+        for (AbstractNMSItemEntity nmsItem : nmsItems) {
+            nmsItem.removeItem();
         }
 
         nmsArmorStands.clear();
@@ -103,16 +101,17 @@ public abstract class PowerUp {
 
     private void placePowerUp(Player player) {
 
-        NMSItem nmsItem = new NMSItem(displayItem, player);
-        nmsItem.sendSpawnItemPacketToPlayer(location);
+        AbstractNMSItemEntity nmsItem = CaptureTheFlag.getReflectionLayer().createNMSItemEntity(displayItem, player);
+        nmsItem.spawnItem(location);
         nmsItems.add(nmsItem);
 
-        NMSArmorStand nmsItemArmorStand = new NMSArmorStand(null);
-        nmsItemArmorStand.sendSpawnArmorStandPacketToPlayer(player, location, true);
+        AbstractNMSArmorStandEntity nmsItemArmorStand = CaptureTheFlag.getReflectionLayer().createNMSArmorStandEntity(null);
+
+        nmsItemArmorStand.spawnArmorStand(player, location, true);
         nmsArmorStands.add(nmsItemArmorStand);
 
-        NMSArmorStand nmsItemHologram = new NMSArmorStand(displayName);
-        nmsItemHologram.sendSpawnArmorStandPacketToPlayer(player, new Location(location.getWorld(), location.getX(), location.getY()+1, location.getZ()), true);
+        AbstractNMSArmorStandEntity nmsItemHologram = CaptureTheFlag.getReflectionLayer().createNMSArmorStandEntity(displayName);
+        nmsItemHologram.spawnArmorStand(player, new Location(location.getWorld(), location.getX(), location.getY()+1, location.getZ()), true);
         nmsArmorStands.add(nmsItemHologram);
 
         int[] entityIds = new int[]{nmsItem.getEntityId()};

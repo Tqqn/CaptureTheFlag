@@ -1,6 +1,6 @@
 package com.tqqn.capturetheflag.utils;
 
-import com.tqqn.capturetheflag.nms.NMSUtils;
+import com.tqqn.capturetheflag.CaptureTheFlag;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -66,6 +66,6 @@ public enum PluginItems {
     }
 
     public ItemStack setNBTTag(String key, String value) {
-        return NMSUtils.applyNBTTag(getItemStack(), key, value);
+        return CaptureTheFlag.getReflectionLayer().applyNBTTag(getItemStack(), key, value);
     }
 }

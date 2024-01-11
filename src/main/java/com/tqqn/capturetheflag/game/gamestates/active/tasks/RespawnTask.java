@@ -1,7 +1,7 @@
 package com.tqqn.capturetheflag.game.gamestates.active.tasks;
 
+import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.game.data.GamePlayer;
-import com.tqqn.capturetheflag.nms.NMSUtils;
 import com.tqqn.capturetheflag.utils.NMessages;
 import com.tqqn.capturetheflag.utils.SMessages;
 import org.bukkit.potion.PotionEffect;
@@ -25,7 +25,7 @@ public class RespawnTask extends BukkitRunnable {
             gamePlayer.getPlayer().removePotionEffect(PotionEffectType.SLOW);
             gamePlayer.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
             gamePlayer.spawn(gamePlayer.getTeam().getSpawnLocation());
-            NMSUtils.sendTitleMessage(gamePlayer.getPlayer(), NMessages.RESPAWN_MESSAGE_TITLE.getMessage(), "", 20, 20, 10);
+            CaptureTheFlag.getReflectionLayer().sendTitleMessage(gamePlayer.getPlayer(), NMessages.RESPAWN_MESSAGE_TITLE.getMessage(), "", 20, 20, 10);
             return;
         }
 
@@ -36,7 +36,7 @@ public class RespawnTask extends BukkitRunnable {
             gamePlayer.getPlayer().setAllowFlight(false);
             gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawnLocation());
         }
-        NMSUtils.sendTitleMessage(gamePlayer.getPlayer(), NMessages.RESPAWN_TIMER_TITLE.getMessage(), SMessages.RESPAWN_TIMER_SUBTITLE.getMessage(String.valueOf(timer)), 20, 20, 20);
+        CaptureTheFlag.getReflectionLayer().sendTitleMessage(gamePlayer.getPlayer(), NMessages.RESPAWN_TIMER_TITLE.getMessage(), SMessages.RESPAWN_TIMER_SUBTITLE.getMessage(String.valueOf(timer)), 20, 20, 20);
         gamePlayer.getPlayer().sendMessage(SMessages.RESPAWN_TIMER_MESSAGE.getMessage(String.valueOf(timer)));
         timer--;
     }

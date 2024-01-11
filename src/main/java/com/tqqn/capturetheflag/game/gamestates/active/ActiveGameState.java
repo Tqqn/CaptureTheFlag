@@ -14,7 +14,6 @@ import com.tqqn.capturetheflag.game.gamestates.active.tasks.RespawnTask;
 import com.tqqn.capturetheflag.game.gamestates.active.scoreboard.ActiveGameScoreboard;
 import com.tqqn.capturetheflag.game.gamestates.active.tasks.ActiveGameTask;
 import com.tqqn.capturetheflag.game.tab.TabScoreboardManager;
-import com.tqqn.capturetheflag.nms.NMSUtils;
 import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.PluginSounds;
 import com.tqqn.capturetheflag.utils.SMessages;
@@ -22,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -95,6 +93,7 @@ public class ActiveGameState extends AbstractGameState {
         Player player = event.getEntity();
 
         event.getDrops().clear();
+        event.setDroppedExp(0);
 
         GamePlayer gamePlayer = Arena.getGamePlayer(player.getUniqueId());
         event.setDeathMessage("");
@@ -172,15 +171,14 @@ public class ActiveGameState extends AbstractGameState {
                 if (event.getItem().getType() == Material.COMPASS) {
                     String targetName = "";
                     ItemStack compass = event.getItem();
-
-                    switch (NMSUtils.getNBTTag(compass, "flagSelected").replace("\"", "")) {
+                    switch (CaptureTheFlag.getReflectionLayer().getNBTTag(compass, "flagSelected").replace("\"", "")) {
                         case "red":
                         case "none":
-                            compass.setItemMeta(NMSUtils.applyNBTTag(compass, "flagSelected", "blue").getItemMeta());
+                            compass.setItemMeta(CaptureTheFlag.getReflectionLayer().applyNBTTag(compass, "flagSelected", "blue").getItemMeta());
                             targetName = GameUtils.translateColor("&bTargeting: &9Blue Flag");
                             break;
                         case "blue":
-                            compass.setItemMeta(NMSUtils.applyNBTTag(compass, "flagSelected", "red").getItemMeta());
+                            compass.setItemMeta(CaptureTheFlag.getReflectionLayer().applyNBTTag(compass, "flagSelected", "red").getItemMeta());
                             targetName = GameUtils.translateColor("&bTargeting: &cRed Flag");
                             break;
                     }

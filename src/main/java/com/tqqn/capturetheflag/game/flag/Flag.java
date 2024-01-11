@@ -1,9 +1,10 @@
 package com.tqqn.capturetheflag.game.flag;
 
+import com.tqqn.capturetheflag.CaptureTheFlag;
 import com.tqqn.capturetheflag.game.arena.Arena;
 import com.tqqn.capturetheflag.game.GameManager;
 import com.tqqn.capturetheflag.game.data.GamePlayer;
-import com.tqqn.capturetheflag.nms.NMSArmorStand;
+import com.tqqn.capturetheflag.nms.framework.AbstractNMSArmorStandEntity;
 import com.tqqn.capturetheflag.game.teams.GameTeam;
 import com.tqqn.capturetheflag.utils.GameUtils;
 import com.tqqn.capturetheflag.utils.NMessages;
@@ -24,7 +25,7 @@ public class Flag {
     private FlagStatus flagStatus = FlagStatus.SAFE;
     private Location currentLocation;
 
-    private final Collection<NMSArmorStand> spawnedHolograms = new ArrayList<>();
+    private final Collection<AbstractNMSArmorStandEntity> spawnedHolograms = new ArrayList<>();
 
     /**
      * Creates a Flag Object.
@@ -93,7 +94,7 @@ public class Flag {
      */
     public void removeFlag() {
         if (currentLocation != null) currentLocation.getBlock().setType(Material.AIR);
-        spawnedHolograms.forEach(NMSArmorStand::sendDestroyArmorStandPacketToPlayer);
+        spawnedHolograms.forEach(AbstractNMSArmorStandEntity::removeArmorStand);
         spawnedHolograms.clear();
         GameManager.removeSpawnedFlag(this);
     }
@@ -105,18 +106,18 @@ public class Flag {
     private void spawnFlagHologram(Location location) {
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (Arena.getGamePlayer(players.getUniqueId()).getTeam() == gameTeam) {
-                NMSArmorStand flagHologram;
+                AbstractNMSArmorStandEntity flagHologram;
                 if (flagStatus == FlagStatus.DROPPED) {
-                    flagHologram = new NMSArmorStand(NMessages.FLAG_ITEM_HOLOGRAM_RETURN.getMessage());
+                    flagHologram = CaptureTheFlag.getReflectionLayer().createNMSArmorStandEntity(NMessages.FLAG_ITEM_HOLOGRAM_RETURN.getMessage());
                 } else {
-                    flagHologram = new NMSArmorStand(NMessages.FLAG_ITEM_HOLOGRAM_SELF.getMessage());
+                    flagHologram = CaptureTheFlag.getReflectionLayer().createNMSArmorStandEntity(NMessages.FLAG_ITEM_HOLOGRAM_SELF.getMessage());
                 }
-                flagHologram.sendSpawnArmorStandPacketToPlayer(players, location, false);
+                flagHologram.spawnArmorStand(players, location, false);
                 spawnedHolograms.add(flagHologram);
 
             } else {
-                NMSArmorStand flagHologram = new NMSArmorStand(NMessages.FLAG_ITEM_HOLOGRAM_ENEMY.getMessage());
-                flagHologram.sendSpawnArmorStandPacketToPlayer(players, location, false);
+                AbstractNMSArmorStandEntity flagHologram = CaptureTheFlag.getReflectionLayer().createNMSArmorStandEntity(NMessages.FLAG_ITEM_HOLOGRAM_ENEMY.getMessage());
+                flagHologram.spawnArmorStand(players, location, false);
                 spawnedHolograms.add(flagHologram);
             }
         }
