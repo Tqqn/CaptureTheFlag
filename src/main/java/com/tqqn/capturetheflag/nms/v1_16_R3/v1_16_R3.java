@@ -60,8 +60,7 @@ public class v1_16_R3 implements ReflectionLayer {
             List<String> playerList = new ArrayList<>();
             playerList.add(player.getName());
 
-            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam();
-            Object packetPlayOutScoreboardTeam2 = packetPlayOutScoreboardTeam.getClass().getConstructor().newInstance();
+            Object packetPlayOutScoreboardTeam2 = PacketPlayOutScoreboardTeam.class.getConstructor().newInstance();
 
             setField(packetPlayOutScoreboardTeam2, getField(packetPlayOutScoreboardTeam2.getClass(), "a"), teamName);
 
